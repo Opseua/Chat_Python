@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Bot</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #121212;
+            color: #ccc;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+
+        #chat-container {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+            max-width: 800px;
+            height: calc(100vh - 20px);
+            max-height: 600px;
+            margin: auto;
+        }
+
+        #chat-box {
+            flex: 1;
+            border: 1px solid #555;
+            background-color: #333;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            box-sizing: border-box;
+        }
+
+        .message {
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 12px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-message {
+            text-align: left;
+            background-color: #0056b3;
+            color: white;
+        }
+
+        .bot-message {
+            text-align: left;
+            background-color: #555;
+            color: #ccc;
+        }
+
+        .copy-icon {
+            margin-top: 5px;
+            align-self: flex-end;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        #input-form {
+            display: flex;
+            margin-top: 10px;
+            flex-direction: column;
+        }
+
+        #input-form textarea {
+            flex: 1;
+            padding: 10px;
+            font-size: 16px;
+            background-color: #333;
+            color: #ccc;
+            border: 1px solid #555;
+            border-radius: 4px;
+            box-sizing: border-box;
+            resize: none;
+            min-height: 60px;
+        }
+
+        #input-form textarea::placeholder {
+            color: #888;
+        }
+
+        #input-form button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        #input-form button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="chat-container">
+        <div id="chat-box"></div>
+
+        <form id="input-form">
+            <textarea id="message-input" placeholder="Digite sua mensagem..." required></textarea>
+            <button type="submit">Enviar</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('input-form').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const messageInput = document.getElementById('message-input');
+            let message = messageInput.value.trimEnd(); // Remove quebras de linha no final da mensagem
+            const chatId = '2024_08_02-23.05.30.760-HRF';  // Chat ID fixo para este exemplo
+
+            if (message !== '') {
+                displayMessage(message, 'user-message');
+                sendMessageToBackend(chatId, message);
+                messageInput.value = '';
+            }
+        });
+
+        document.getElementById('message-input').addEventListener('keydown', function (event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                document.getElementById('input-form').dispatchEvent(new Event('submit'));
+            }
+        });
+
+        function displayMessage(text, className = '') {
+            const chatBox = document.getElementById('chat-box');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'message ' + className;
+            messageElement.innerHTML = text.replace(/\n/g, '<br>'); // Substitui quebras de linha por <br>
+
+            // Adiciona o ícone de copiar
+            const copyIcon = document.createElement('i');
+            copyIcon.className = 'fa fa-copy copy-icon';
+            copyIcon.onclick = function () {
+                copyToClipboard(text);
+            };
+            messageElement.appendChild(copyIcon);
+
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function sendMessageToBackend(chatId, message) {
+            fetch('http://127.0.0.1:8092/chat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: 'messageSend',
+                    // chatId: chatId,
+                    messagePrompt: message,
+                    // messageFile: messageFile
+                })
+            })
+                .then(response => {
+                    if (response.headers.get('content-type')?.includes('application/json')) {
+                        return response.json();
+                    } else {
+                        throw new Error('Resposta não é JSON');
+                    }
+                })
+                .then(data => {
+                    if (data.ret) {
+                        displayMessage(data.res.response, 'bot-message');
+                    } else {
+                        displayMessage(`Erro ao enviar mensagem | ${data.msg}`, 'error-message');
+                    }
+                })
+                .catch(error => {
+                    displayMessage('Erro ao enviar mensagem: ' + error.message, 'error-message');
+                });
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    // alert('Mensagem copiada para a área de transferência!');
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar a mensagem: ', err);
+                });
+        }
+    </script>
+
+</body>
+
+</html>

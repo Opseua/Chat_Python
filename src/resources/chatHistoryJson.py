@@ -1,5 +1,3 @@
-"""IGNORE"""
-
 # pylint: disable=C0103
 # pylint: disable=C0301
 # pylint: disable=W0621
@@ -13,15 +11,23 @@
 # pylint: disable=W0603
 # pylint: disable=C0115
 # pylint: disable=R1710
+# pylint: disable=W0622
+# pylint: disable=C0410
+# pylint: disable=C0114
+# pylint: disable=C0116
+# ERRO DE IMPORT EM OUTRA PASTA
+# pylint: disable=E0401
+# ERRO DE IMPORT ANTES DE USAR A VARIÁVEL
+# pylint: disable=C0413
+# ERRO DE IMPORT 'datetime'
+# pylint: disable=E1101
 
-import json
-import os
+import json, os
 
 pathChats = "log/chats.json"
 
 
 def historyGet():
-    """IGNORE"""
     if not os.path.exists(pathChats):
         historySet({"chats": []})
         return {"chats": []}
@@ -30,7 +36,6 @@ def historyGet():
 
 
 def historySet(inf):
-    """IGNORE"""
     # SALVAR NO ARQUIVO
     with open(pathChats, "w", encoding="utf-8") as file:
         json.dump(inf, file, ensure_ascii=False, indent=4)

@@ -1,4 +1,9 @@
-"""IGNORE"""
+# {
+#     "action": "messageSend",
+#     "chatId": "2024_07_28-14.24.08.379-VEG",
+#     "model": "gpt-4o", // → OU SEM A CHAVE
+#     "message": "Qual a idade de Saturno?"
+# }
 
 # pylint: disable=C0103
 # pylint: disable=C0301
@@ -13,12 +18,21 @@
 # pylint: disable=W0603
 # pylint: disable=C0115
 # pylint: disable=R1710
+# pylint: disable=W0622
+# pylint: disable=C0410
+# pylint: disable=C0114
+# pylint: disable=C0116
+# ERRO DE IMPORT EM OUTRA PASTA
+# pylint: disable=E0401
+# ERRO DE IMPORT ANTES DE USAR A VARIÁVEL
+# pylint: disable=C0413
+# ERRO DE IMPORT 'datetime'
+# pylint: disable=E1101
 
-from historyJson import historyGet, historySet
+from chatHistoryJson import historyGet, historySet
 
 
 def chatAddMessage(inf):
-    """IGNORE"""
     chatId = inf["chatId"]
     model = inf["model"]
     timestampUser = inf["timestampUser"]
