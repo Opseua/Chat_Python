@@ -34,6 +34,7 @@ from chatHistoryJson import historyGet, historySet
 
 def chatAddMessage(inf):
     chatId = inf["chatId"]
+    origin = inf["origin"]
     model = inf["model"]
     timestampUser = inf["timestampUser"]
     timestampAssistant = inf["timestampAssistant"]
@@ -57,6 +58,7 @@ def chatAddMessage(inf):
                 }
             )
             chat["timestampEdit"] = timestampAssistant
+            chat["origin"] = origin
             chat["model"] = model
             break
 

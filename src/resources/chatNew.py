@@ -33,6 +33,7 @@ from chatHistoryJson import historyGet, historySet
 
 def chatNew(inf):
     chatId = inf["chatId"]
+    origin = inf["origin"]
     model = inf["model"]
     timestampUser = inf["timestampUser"]
     timestampAssistant = inf["timestampAssistant"]
@@ -47,6 +48,7 @@ def chatNew(inf):
     chatNewInf = {
         "timestampCreate": timestampUser,
         "timestampEdit": timestampAssistant,
+        "origin": origin,
         "model": model,
         "chatId": chatId,
         "messages": [

@@ -57,6 +57,7 @@ def chatHistoryMessages(inf):
             # ADICIONAR INFORMAÇÕES DA MENSAGEM
             messagesRes["timestampCreate"] = chat["timestampCreate"]
             messagesRes["timestampEdit"] = chat["timestampEdit"]
+            messagesRes["origin"] = chat["origin"]
             messagesRes["model"] = chat["model"]
             messagesRes["chatId"] = chat["chatId"]
             # INCLUIR APENAS AS CHAVES INFORMADAS

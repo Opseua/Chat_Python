@@ -48,7 +48,7 @@ try:
     web = infGlobal["web"]
 
     # VARIÁVEIS
-    portServerHttp = infGlobal["portServerHttp"]
+    port = infGlobal["port"]
 
     # FUNÇÕES DE ARQUIVOS
     from httpRequest import httpRequest
@@ -72,9 +72,9 @@ try:
             cors.add(route)
         runner = web.AppRunner(app)
         await runner.setup()
-        site = web.TCPSite(runner, port=portServerHttp)
+        site = web.TCPSite(runner, port=port)
         await site.start()
-        print(f"RODANDO → SERVIDOR HTTP NA PORTA: {portServerHttp}")
+        print(f"RODANDO → SERVIDOR HTTP NA PORTA: {port}")
         # MANTER EM EXECUÇÃO
         while True:
             await asyncio.sleep(3600)
@@ -86,9 +86,5 @@ try:
 
 except Exception as exceptErr:
     errAll(exceptErr)
-    print("CÓDIGO INTEIRO [server]")
+    print("CÓDIGO INTEIRO")
     os._exit(1)
-
-
-# 8890 SERVER HTTP
-# 8892 GF4 FRONT-END

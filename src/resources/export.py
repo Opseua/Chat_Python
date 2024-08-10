@@ -24,7 +24,7 @@
 # pylint: disable=E1101
 
 # BIBLIOTECAS: NATIVAS
-import os, sys, asyncio, random, string, json, re
+import os, sys, time, asyncio, random, string, json, re, threading, signal
 from datetime import datetime
 import aiohttp_cors
 
@@ -36,7 +36,8 @@ fileChrome_Extension = os.getenv("fileChrome_Extension").replace(r"\\", "/")
 fullPathJson, config = (os.path.abspath(f"{fileChrome_Extension}/src/config.json"), "")
 with open(fullPathJson, "r", encoding="utf-8") as file:
     config = json.load(file)
-port = config["chatPython"]["port"]
+portServerHttp = config["chatPython"]["portServerHttp"]
+portG4fFrontEnd = config["chatPython"]["portG4fFrontEnd"]
 telegramApiId = config["chatPython"]["telegramApiId"]
 telegramApiHash = config["chatPython"]["telegramApiHash"]
 telegramChatName = config["chatPython"]["telegramChatName"]
@@ -45,17 +46,21 @@ telegramChatName = config["chatPython"]["telegramChatName"]
 infGlobal = {
     "asyncio": asyncio,
     "sys": sys,
+    "time": time,
     "os": os,
     "random": random,
     "string": string,
     "json": json,
     "re": re,
+    "threading": threading,
+    "signal": signal,
     "datetime": datetime,
     "aiohttp_cors": aiohttp_cors,
     "x": "x",
     "web": web,
     "x1": "x",
-    "port": port,
+    "portServerHttp": portServerHttp,
+    "portG4fFrontEnd": portG4fFrontEnd,
     "telegramApiId": telegramApiId,
     "telegramApiHash": telegramApiHash,
     "telegramChatName": telegramChatName,

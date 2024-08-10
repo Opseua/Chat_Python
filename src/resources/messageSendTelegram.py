@@ -40,9 +40,9 @@ try:
     from telethon import TelegramClient, events
 
     # VARIÁVEIS
-    telegramApiId = "20633867"
-    telegramApiHash = "f66a6c85c9b735acfe67c38ee8fdcb43"
-    telegramChatName = "chatgpt68_bot"
+    telegramApiId = infGlobal["telegramApiId"]
+    telegramApiHash = infGlobal["telegramApiHash"]
+    telegramChatName = infGlobal["telegramChatName"]
     telegramClient = TelegramClient("log/session", telegramApiId, telegramApiHash)
 
     # ------------------------------------------------------ TELEGRAM ------------------------------------------------------------
@@ -142,7 +142,7 @@ try:
 
 except Exception as exceptErr:
     errAll(exceptErr)
-    print("CÓDIGO INTEIRO")
+    print("CÓDIGO INTEIRO [messageSendTelegram]")
     os._exit(1)
 
 
