@@ -1,14 +1,3 @@
-# {
-#     "action": "chatHistory",
-#     "model": "*",
-#     "includesInMessages": [
-#         "role",
-#         "content",
-#         //"timestampCreate",
-#         "x"
-#     ]
-# }
-
 # pylint: disable=C0103
 # pylint: disable=C0301
 # pylint: disable=W0621

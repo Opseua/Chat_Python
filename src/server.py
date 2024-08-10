@@ -86,7 +86,7 @@ try:
 
 except Exception as exceptErr:
     errAll(exceptErr)
-    print("CÓDIGO INTEIRO [server]")
+    print("CÓDIGO INTEIRO [server]", exceptErr)
     os._exit(1)
 
 

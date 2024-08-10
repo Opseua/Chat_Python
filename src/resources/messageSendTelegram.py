@@ -43,12 +43,12 @@ try:
     telegramApiId = infGlobal["telegramApiId"]
     telegramApiHash = infGlobal["telegramApiHash"]
     telegramChatName = infGlobal["telegramChatName"]
-    telegramClient = TelegramClient("log/session", telegramApiId, telegramApiHash)
+    clientTelegram = TelegramClient("log/session", telegramApiId, telegramApiHash)
 
     # ------------------------------------------------------ TELEGRAM ------------------------------------------------------------
     # CLIENT
     async def runClient():
-        await telegramClient.start()
+        await clientTelegram.start()
         print("RODANDO → CLIENTE TELEGRAM")
 
     # INICIAR
@@ -59,7 +59,7 @@ try:
     awaitForMessage = ["🤖️", "Reset successfully!", "Upload successfully!"]
 
     # EVENTO: MENSAGEM RECEBIDA
-    @telegramClient.on(events.NewMessage(from_users=telegramChatName))
+    @clientTelegram.on(events.NewMessage(from_users=telegramChatName))
     async def handler(event):
         global messageId, messageContent, messageTimestamp, isMonitoring
         if not isMonitoring:
@@ -69,7 +69,7 @@ try:
         print(f"MENSAGEM RECEBIDA: {messageContent}")
 
     # EVENTO: MENSAGEM EDITADA
-    @telegramClient.on(events.MessageEdited(from_users=telegramChatName))
+    @clientTelegram.on(events.MessageEdited(from_users=telegramChatName))
     async def handlerMessageEdited(edited_event):
         global messageId, messageContent, messageTimestamp, isMonitoring
         if not isMonitoring:
@@ -83,14 +83,14 @@ try:
 
     # '/reset' + APAGAR MENSAGENS
     async def messagesReset():
-        await telegramClient.send_message(telegramChatName, "/reset")
+        await clientTelegram.send_message(telegramChatName, "/reset")
         await asyncio.sleep(2)
-        async for message in telegramClient.iter_messages(telegramChatName):
+        async for message in clientTelegram.iter_messages(telegramChatName):
             await message.delete()
 
     # ----------------------------------------------------------------------------------------------------------------------------
 
-    # ENVIAR MENSAGEM: TELEGRAM
+    # ENVIAR MENSAGEM
     async def messageSendTelegram(inf):
         global messageId, messageContent, messageTimestamp, isMonitoring
         content = ""
@@ -100,10 +100,10 @@ try:
             return "COMANDO: reset"
         if inf["messageFile"] is None:
             # MENSAGEM: TEXTO
-            await telegramClient.send_message(telegramChatName, inf["messagePrompt"])
+            await clientTelegram.send_message(telegramChatName, inf["messagePrompt"])
         elif inf["messageFile"]:
             # MENSAGEM: ARQUIVO
-            await telegramClient.send_file(telegramChatName, inf["messageFile"])
+            await clientTelegram.send_file(telegramChatName, inf["messageFile"])
         else:
             content = "TIPO NÃO IDENTIFICADO"
             return content
@@ -142,43 +142,5 @@ try:
 
 except Exception as exceptErr:
     errAll(exceptErr)
-    print("CÓDIGO INTEIRO [messageSendTelegram]")
+    print("CÓDIGO INTEIRO [messageSendTelegram]", exceptErr)
     os._exit(1)
-
-
-# {
-#     "action": "historyChat",
-#     "model": "*",
-#     "includesInMessages": [
-#         "role",
-#         "content",
-#         //"timestampCreate",
-#         "x"
-#     ]
-# }
-
-# {
-#     "action": "historyMessages",
-#     "chatId": "2024_08_03-19.17.50.609-DGW",
-#     "includesInMessages": [
-#         "role",
-#          "content",
-#         //"timestampCreate",
-#         "x"
-#     ]
-# }
-
-# {
-#     "action": "messageSend",
-#     "chatIdA": "2024_08_03-19.17.50.609-DGW",
-#     "messagePrompt": "Qual a cor do céu?",
-#     "messageFile": true,
-#     "x": "x"
-# }
-
-# {
-#     "action": "historyDelete",
-#     "chatId": "2024_08_03-20.04.16.664-NQF",
-#     "qtdDeleteMessages": 999,
-#     "x": "x"
-# }

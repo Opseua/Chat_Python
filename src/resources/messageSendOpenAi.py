@@ -32,48 +32,47 @@ import os
 
 try:
     # BIBLIOTECAS: NATIVAS
-    sys = infGlobal["sys"]
-    time = infGlobal["time"]
     json = infGlobal["json"]
-    threading = infGlobal["threading"]
-    signal = infGlobal["signal"]
 
     # BIBLIOTECAS: NECESSÁRIO INSTALAR → pip install brotli mitmproxy
-    from g4f.client import Client
-    from g4f.gui import run_gui
+    from openai import OpenAI
 
     # VARIÁVEIS
-    portG4fFrontEnd = infGlobal["portG4fFrontEnd"]
+    openAiZukiJourneyBaseUrl = infGlobal["openAiZukiJourneyBaseUrl"]
+    openAiZukiJourneyApiKey = infGlobal["openAiZukiJourneyApiKey"]
+    openAiNagaBaseUrl = infGlobal["openAiNagaBaseUrl"]
+    openAiNagaApiKey = infGlobal["openAiNagaApiKey"]
 
-    # ------------------------------------------------------ G4F ------------------------------------------------------------
+    # ------------------------------------------------------ OPENAI ------------------------------------------------------------
     # CLIENT
-    client = Client()
 
-    def run_gui_thread():
-        run_gui(port=portG4fFrontEnd)
+    # [ZukiJourney]
+    clientZukiJourney = OpenAI(
+        base_url=openAiZukiJourneyBaseUrl, api_key=openAiZukiJourneyApiKey
+    )
 
-    # INICIAR
-    gui_thread = threading.Thread(target=run_gui_thread, daemon=True)
-    gui_thread.start()
+    # [Naga]
+    clientNaga = OpenAI(base_url=openAiNagaBaseUrl, api_key=openAiNagaApiKey)
 
-    def stopCode(sig, frame):
-        sys.exit(0)
-
-    signal.signal(signal.SIGINT, stopCode)
-    time.sleep(2)
-    # LIMPAR CONSOLE
-    os.system("cls")
-    print("RODANDO → CLIENTE G4F [frontEnd/backEnd]")
+    print("RODANDO → CLIENTE OPENAI [ZukiJourney/Naga]")
 
     # ENVIAR MENSAGEM
-    async def messageSendG4f(inf):
+    async def messageSendOpenAi(inf):
         model = inf["model"]
         messagePrompt = json.loads(inf["messagePrompt"])
+        provider = inf["provider"]
         response = None
         try:
-            response = client.chat.completions.create(
-                model=model, messages=messagePrompt
-            )
+            if provider == "zukiJourney":
+                response = clientZukiJourney.chat.completions.create(
+                    model=model,
+                    messages=messagePrompt,
+                )
+            elif provider == "naga":  # https://api.naga.ac/v1/limits
+                response = clientNaga.chat.completions.create(
+                    model=model,
+                    messages=messagePrompt,
+                )
         except Exception as e:
             print(str(e))
 
@@ -88,5 +87,5 @@ try:
 
 except Exception as exceptErr:
     errAll(exceptErr)
-    print("CÓDIGO INTEIRO [messageSendG4f]", exceptErr)
+    print("CÓDIGO INTEIRO [messageSendOpenAi]", exceptErr)
     os._exit(1)

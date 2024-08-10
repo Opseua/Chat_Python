@@ -53,6 +53,8 @@ try:
     from chatNew import chatNew
     from messageSendG4f import messageSendG4f
     from messageSendTelegram import messageSendTelegram
+    from messageSendOpenAi import messageSendOpenAi
+    from messageSendJs import messageSendJs
 
     # SERVER HTTP: RESPONSE
     def httpResponse(text):
@@ -82,15 +84,22 @@ try:
         if action is None or action == "":
             return httpResponse({"msg": "CHAT: ERRO | INFORMAR O 'action'"})
 
-        # DEFINIR 'origin'
-        origin = data.get("origin")
-        if origin is None or origin == "":
-            origin = None
+        # DEFINIR 'provider'
+        provider = data.get("provider")
+        if provider is None or provider == "":
+            provider = None
 
         # DEFINIR 'model'
         model = data.get("model")
         if model is None or model == "":
-            model = "gpt-3.5-turbo"
+            if provider in ["telegram", "g4f"]:
+                model = "gpt-4o"
+            elif provider in ["zukiJourney", "js"]:
+                model = "gpt-4"
+            elif provider in ["naga"]:
+                model = "gpt-4o-mini"
+            else:
+                model = "gpt-3.5-turbo"
 
         # DEFINIR 'messagePrompt'
         messagePrompt = data.get("messagePrompt")
@@ -117,9 +126,11 @@ try:
         if qtdDeleteMessages is None or qtdDeleteMessages == "":
             qtdDeleteMessages = 0
 
-        # retMessageSend = await messageSendG4f("AAA")
-        # return httpResponse({"msg": retMessageSend})
-
+        if provider in ["g4f", "zukiJourney", "naga", "js"]:
+            messageFile = None
+        #
+        # -------------------------------------------------------------------------------------------------------------
+        #
         # →→→ ACTION: ENVIAR MENSAGEM
         if action == "messageSend":
             if messagePrompt is None:
@@ -167,8 +178,8 @@ try:
 
             # ENVIAR MENSAGEM
             retMessageSend = None
-            if origin == "telegram":
-                # *** TELEGRAN
+            if provider == "telegram":
+                # *** TELEGRAN [gpt-4o]
                 retMessageSend = await messageSendTelegram(
                     {"messagePrompt": messagePrompt, "messageFile": messageFile}
                 )
@@ -182,13 +193,27 @@ try:
                     messageSendTelegram({"messagePrompt": "reset", "messageFile": None})
                 )
 
-            elif origin == "g4f":
-                # *** G4F
+            elif provider == "g4f":
+                # *** G4F [gpt-4o]
                 retMessageSend = await messageSendG4f(
                     {"model": model, "messagePrompt": messagePrompt}
                 )
+            elif provider in ["zukiJourney", "naga"]:
+                # *** ZUKIJOURNEY (12/min) | NAGA (3/min) [gpt-4]
+                retMessageSend = await messageSendOpenAi(
+                    {
+                        "model": model,
+                        "messagePrompt": messagePrompt,
+                        "provider": provider,
+                    }
+                )
+            elif provider == "js":
+                # *** JS [gpt-4]
+                retMessageSend = await messageSendJs({"messagePrompt": messagePrompt})
             else:
-                infBody = {"msg": "CHAT [MESSAGESEND]: ERRO | INFORMAR O 'origin'"}
+                infBody = {
+                    "msg": "CHAT [MESSAGESEND]: ERRO | INFORMAR O 'provider' → 'telegram', 'g4f', 'zukiJourney', 'naga', 'js'"
+                }
                 return httpResponse(infBody)
 
             # BOT: RESPOSTA RECEBIDA
@@ -196,7 +221,7 @@ try:
                 infChat = {
                     "chatNew": isNewChat,
                     "chatId": chatId,
-                    "origin": origin,
+                    "provider": provider,
                     "model": model,
                     "timestampUser": timestampUser,
                     "timestampAssistant": int(datetime.now().timestamp()),
@@ -215,7 +240,7 @@ try:
                     "res": {
                         "chatNew": isNewChat,
                         "chatId": chatId,
-                        "origin": origin,
+                        "provider": provider,
                         "model": model,
                         "response": retMessageSend,
                     },
@@ -224,7 +249,9 @@ try:
             else:
                 infBody = {"msg": "CHAT [MESSAGESEND]: ERRO | RESPOSTA NAO RECEBIDA"}
                 return httpResponse(infBody)
-
+        #
+        # -------------------------------------------------------------------------------------------------------------
+        #
         # →→→ ACTION: HISTÓRICO DE CHATS
         elif action == "historyChat":
             infHistoryChat = {"model": model, "includesInMessages": includesInMessages}
@@ -252,5 +279,44 @@ try:
 
 except Exception as exceptErr:
     errAll(exceptErr)
-    print("CÓDIGO INTEIRO [httpRequest]")
+    print("CÓDIGO INTEIRO [httpRequest]", exceptErr)
     os._exit(1)
+
+# {
+#     "action": "historyChat",
+#     "model": "*",
+#     "includesInMessages": [
+#         "role",
+#         "content",
+#         //"timestampCreate",
+#         "x"
+#     ]
+# }
+
+# {
+#     "action": "historyMessages",
+#     "chatId": "2024_07_28-14.24.08.379-VEG",
+#     "includesInMessages": [
+#         "role",
+#          "content",
+#         //"timestampCreate",
+#         "x"
+#     ]
+# }
+
+# {
+#     "action": "messageSend",
+#     "provider": "js",
+#     "model": "gpt-4o", // → OU SEM A CHAVE
+#     "chatId": "2024_08_10-01.07.58.990-VIU",
+#     "messagePrompt": "Quanto é 1+1?",
+#     "messageFile": false,
+#     "x": "x"
+# }
+
+# {
+#     "action": "historyDelete",
+#     "chatId": "2024_07_28-14.24.08.379-VEG",
+#     "qtdDeleteMessages": 2,
+#     "x":"x"
+# }

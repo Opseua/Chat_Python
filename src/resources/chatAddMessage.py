@@ -1,10 +1,3 @@
-# {
-#     "action": "messageSend",
-#     "chatId": "2024_07_28-14.24.08.379-VEG",
-#     "model": "gpt-4o", // → OU SEM A CHAVE
-#     "message": "Qual a idade de Saturno?"
-# }
-
 # pylint: disable=C0103
 # pylint: disable=C0301
 # pylint: disable=W0621
@@ -34,7 +27,7 @@ from chatHistoryJson import historyGet, historySet
 
 def chatAddMessage(inf):
     chatId = inf["chatId"]
-    origin = inf["origin"]
+    provider = inf["provider"]
     model = inf["model"]
     timestampUser = inf["timestampUser"]
     timestampAssistant = inf["timestampAssistant"]
@@ -58,7 +51,7 @@ def chatAddMessage(inf):
                 }
             )
             chat["timestampEdit"] = timestampAssistant
-            chat["origin"] = origin
+            chat["provider"] = provider
             chat["model"] = model
             break
 

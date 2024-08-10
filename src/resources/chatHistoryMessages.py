@@ -1,14 +1,3 @@
-# {
-#     "action": "historyMessages",
-#     "chatId": "2024_07_28-14.24.08.379-VEG",
-#     "includesInMessages": [
-#         "role",
-#          "content",
-#         //"timestampCreate",
-#         "x"
-#     ]
-# }
-
 # pylint: disable=C0103
 # pylint: disable=C0301
 # pylint: disable=W0621
@@ -57,7 +46,7 @@ def chatHistoryMessages(inf):
             # ADICIONAR INFORMAÇÕES DA MENSAGEM
             messagesRes["timestampCreate"] = chat["timestampCreate"]
             messagesRes["timestampEdit"] = chat["timestampEdit"]
-            messagesRes["origin"] = chat["origin"]
+            messagesRes["provider"] = chat["provider"]
             messagesRes["model"] = chat["model"]
             messagesRes["chatId"] = chat["chatId"]
             # INCLUIR APENAS AS CHAVES INFORMADAS

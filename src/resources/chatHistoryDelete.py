@@ -1,9 +1,3 @@
-# {
-#     "action": "historyDelete",
-#     "chatId": "2024_07_28-14.38.53.330-PGP",
-#     "qtdDeleteMessages": 2
-# }
-
 # pylint: disable=C0103
 # pylint: disable=C0301
 # pylint: disable=W0621
