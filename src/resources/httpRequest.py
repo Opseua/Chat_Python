@@ -51,6 +51,7 @@ try:
     from chatHistory import chatHistory
     from chatAddMessage import chatAddMessage
     from chatNew import chatNew
+    from messageSendG4f import messageSendG4f
     from messageSendTelegram import messageSendTelegram
 
     # SERVER HTTP: RESPONSE
@@ -81,6 +82,16 @@ try:
         if action is None or action == "":
             return httpResponse({"msg": "CHAT: ERRO | INFORMAR O 'action'"})
 
+        # DEFINIR 'origin'
+        origin = data.get("origin")
+        if origin is None or origin == "":
+            origin = None
+
+        # DEFINIR 'model'
+        model = data.get("model")
+        if model is None or model == "":
+            model = "gpt-3.5-turbo"
+
         # DEFINIR 'messagePrompt'
         messagePrompt = data.get("messagePrompt")
         if messagePrompt is None or messagePrompt == "":
@@ -106,10 +117,8 @@ try:
         if qtdDeleteMessages is None or qtdDeleteMessages == "":
             qtdDeleteMessages = 0
 
-        # DEFINIR 'model'
-        model = data.get("model")
-        if model is None or model == "":
-            model = "gpt-3.5-turbo"
+        # retMessageSend = await messageSendG4f("AAA")
+        # return httpResponse({"msg": retMessageSend})
 
         # →→→ ACTION: ENVIAR MENSAGEM
         if action == "messageSend":
@@ -156,25 +165,38 @@ try:
                     #  →→→→→→→→→→→→→→→ ARQUIVO + PROMPT_TEXTO
                     pass
 
-            # BOT: ENVIAR MENSAGEM
-            retMessageSend = await messageSendTelegram(
-                {"messagePrompt": messagePrompt, "messageFile": messageFile}
-            )
-            # BOT: PROSSEGUIR COM O ARQUIVO
-            if messageFile:
+            # ENVIAR MENSAGEM
+            retMessageSend = None
+            if origin == "telegram":
+                # *** TELEGRAN
                 retMessageSend = await messageSendTelegram(
-                    {"messagePrompt": messagePrompt, "messageFile": None}
+                    {"messagePrompt": messagePrompt, "messageFile": messageFile}
+                )
+                # PROSSEGUIR COM O ARQUIVO
+                if messageFile:
+                    retMessageSend = await messageSendTelegram(
+                        {"messagePrompt": messagePrompt, "messageFile": None}
+                    )
+                # RESETAR E LIMPAR CONVERSA
+                asyncio.create_task(
+                    messageSendTelegram({"messagePrompt": "reset", "messageFile": None})
                 )
 
-            # RESETAR BOT E LIMPAR CONVERSA
-            asyncio.create_task(
-                messageSendTelegram({"messagePrompt": "reset", "messageFile": None})
-            )
+            elif origin == "g4f":
+                # *** G4F
+                retMessageSend = await messageSendG4f(
+                    {"model": model, "messagePrompt": messagePrompt}
+                )
+            else:
+                infBody = {"msg": "CHAT [MESSAGESEND]: ERRO | INFORMAR O 'origin'"}
+                return httpResponse(infBody)
+
             # BOT: RESPOSTA RECEBIDA
             if retMessageSend:
                 infChat = {
                     "chatNew": isNewChat,
                     "chatId": chatId,
+                    "origin": origin,
                     "model": model,
                     "timestampUser": timestampUser,
                     "timestampAssistant": int(datetime.now().timestamp()),
@@ -193,6 +215,7 @@ try:
                     "res": {
                         "chatNew": isNewChat,
                         "chatId": chatId,
+                        "origin": origin,
                         "model": model,
                         "response": retMessageSend,
                     },
@@ -229,5 +252,5 @@ try:
 
 except Exception as exceptErr:
     errAll(exceptErr)
-    print("CÓDIGO INTEIRO")
+    print("CÓDIGO INTEIRO [httpRequest]")
     os._exit(1)
