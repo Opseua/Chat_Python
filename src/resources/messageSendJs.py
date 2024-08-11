@@ -22,6 +22,10 @@
 # pylint: disable=C0411
 # ERRO DE IMPORT 'datetime'
 # pylint: disable=E1101
+# ERRO IGNORAR ERROS DO CTRL + C
+# pylint: disable=W1514
+# ERRO 'sig' e 'frame'
+# pylint: disable=W0613
 
 # IMPORTAR 'export.py'
 from export import infGlobal
@@ -38,6 +42,7 @@ try:
     # VARIÁVEIS
     securityPass = infGlobal["securityPass"]
     hostPortLocJs = infGlobal["hostPortLocJs"]
+    master = infGlobal["master"]
 
     # ------------------------------------------------------ JS [NODEJS] ------------------------------------------------------------
 
@@ -45,7 +50,7 @@ try:
     async def messageSendJs(inf):
         messagePrompt = inf["messagePrompt"]
         inf = {
-            "url": hostPortLocJs,
+            "url": hostPortLocJs.replace("###", master),
             "method": "POST",
             "headers": {"Content-Type": "application/json", "raw": "True"},
             "body": {
@@ -55,7 +60,7 @@ try:
                         "retInf": True,
                         "name": "chat",
                         "par": {
-                            "provider": "gitHub",
+                            "provider": "gitHub_Python",
                             "input": messagePrompt,
                         },
                     }
@@ -66,8 +71,13 @@ try:
         try:
             retApi = await api(inf)
             if retApi.get("ret"):
-                response = retApi.get("res", {}).get("body", None)
+                retApi = retApi.get("res", {}).get("body", None)
+                if retApi:
+                    retApi = json.loads(retApi)
+                    if retApi["ret"] and retApi["res"]:
+                        response = retApi["res"]
         except Exception as e:
+            errAll(e)
             print(str(e))
 
         return response

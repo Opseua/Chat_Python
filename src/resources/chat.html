@@ -162,45 +162,41 @@
         }
 
         function sendMessageToBackend(chatId, message) {
-            fetch('http://127.0.0.1:8092/chat', {
+            fetch('http://127.0.0.1:8890/chat', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     action: 'messageSend',
+                    provider: "telegram",
                     // chatId: chatId,
                     messagePrompt: message,
                     // messageFile: messageFile
                 })
-            })
-                .then(response => {
-                    if (response.headers.get('content-type')?.includes('application/json')) {
-                        return response.json();
-                    } else {
-                        throw new Error('Resposta não é JSON');
-                    }
-                })
-                .then(data => {
-                    if (data.ret) {
-                        displayMessage(data.res.response, 'bot-message');
-                    } else {
-                        displayMessage(`Erro ao enviar mensagem | ${data.msg}`, 'error-message');
-                    }
-                })
-                .catch(error => {
-                    displayMessage('Erro ao enviar mensagem: ' + error.message, 'error-message');
-                });
+            }).then(response => {
+                if (response.headers.get('content-type')?.includes('application/json')) {
+                    return response.json();
+                } else {
+                    throw new Error('Resposta não é JSON');
+                }
+            }).then(data => {
+                if (data.ret) {
+                    displayMessage(data.res.response, 'bot-message');
+                } else {
+                    displayMessage(`Erro ao enviar mensagem | ${data.msg}`, 'error-message');
+                }
+            }).catch(error => {
+                displayMessage('Erro ao enviar mensagem: ' + error.message, 'error-message');
+            });
         }
 
         function copyToClipboard(text) {
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    // alert('Mensagem copiada para a área de transferência!');
-                })
-                .catch(err => {
-                    console.error('Erro ao copiar a mensagem: ', err);
-                });
+            navigator.clipboard.writeText(text).then(() => {
+                // alert('Mensagem copiada para a área de transferência!');
+            }).catch(err => {
+                console.error('Erro ao copiar a mensagem: ', err);
+            });
         }
     </script>
 

@@ -22,10 +22,15 @@
 # pylint: disable=C0411
 # ERRO DE IMPORT 'datetime'
 # pylint: disable=E1101
+# ERRO IGNORAR ERROS DO CTRL + C
+# pylint: disable=W1514
+# ERRO 'sig' e 'frame'
+# pylint: disable=W0613
 
 # IMPORTAR 'export.py'
 from export import infGlobal
 from export import errAll
+from export import logConsole
 
 # BIBLIOTECAS: NATIVAS
 import os
@@ -49,7 +54,9 @@ try:
     # CLIENT
     async def runClient():
         await clientTelegram.start()
-        print("RODANDO → CLIENTE TELEGRAM")
+        printMsg = "RODANDO → CLIENTE TELEGRAM"
+        logConsole(printMsg)
+        print(printMsg)
 
     # INICIAR
     loop = asyncio.get_event_loop()
@@ -66,7 +73,9 @@ try:
             return
         messageId, messageContent = event.message.id, event.message.text
         messageTimestamp = datetime.now()
-        print(f"MENSAGEM RECEBIDA: {messageContent}")
+        printMsg = f"MENSAGEM RECEBIDA: {messageContent}"
+        logConsole(printMsg)
+        print(printMsg)
 
     # EVENTO: MENSAGEM EDITADA
     @clientTelegram.on(events.MessageEdited(from_users=telegramChatName))
@@ -79,7 +88,9 @@ try:
             includesBotEmoji = "NÃO"
             if awaitForMessage[0] in messageContent:
                 includesBotEmoji = "SIM"
-            print(f"MENSAGEM ALTERADA: {awaitForMessage[0]} [{includesBotEmoji}]")
+            printMsg = f"MENSAGEM ALTERADA: {awaitForMessage[0]} [{includesBotEmoji}]"
+            logConsole(printMsg)
+            print(printMsg)
 
     # '/reset' + APAGAR MENSAGENS
     async def messagesReset():
@@ -113,10 +124,12 @@ try:
             while True:
                 if (datetime.now() - start_wait_time).total_seconds() > 60:
                     isMonitoring = False
-                    print("MENSAGEM NÃO RECEBIDA")
+                    printMsg = "MENSAGEM NÃO RECEBIDA"
+                    logConsole(printMsg)
+                    print(printMsg)
                     messageId, messageContent, messageTimestamp = None, "", None
                     return False
-                await asyncio.sleep(1)
+                await asyncio.sleep(1.5)
                 if messageContent and any(
                     item in messageContent for item in awaitForMessage
                 ):
@@ -127,7 +140,9 @@ try:
                         await asyncio.sleep(1)
                         if (datetime.now() - start_time).total_seconds() > 1:
                             isMonitoring = False
-                            print("# MENSAGEM COMPLETA #")
+                            printMsg = "# MENSAGEM COMPLETA #"
+                            logConsole(printMsg)
+                            print(printMsg)
                             messageContent = re.sub(
                                 r".*\n\n", "", messageContent, count=1
                             )

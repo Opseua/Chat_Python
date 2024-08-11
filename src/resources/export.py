@@ -22,15 +22,20 @@
 # pylint: disable=C0411
 # ERRO DE IMPORT 'datetime'
 # pylint: disable=E1101
+# ERRO IGNORAR ERROS DO CTRL + C
+# pylint: disable=W1514
+# ERRO 'sig' e 'frame'
+# pylint: disable=W0613
 
 # BIBLIOTECAS: NATIVAS
-import os, sys, time, asyncio, random, string, json, re, threading, signal, httpx
+import os, sys, time, random, string, json, re, threading, signal
 from datetime import datetime
-import aiohttp_cors
-
 
 # BIBLIOTECAS: NECESSÁRIO INSTALAR → pip install brotli mitmproxy
+import asyncio
+import aiohttp_cors
 from aiohttp import web
+import httpx
 
 # VARIÁVEIS
 fileChrome_Extension = os.getenv("fileChrome_Extension").replace(r"\\", "/")
@@ -57,6 +62,7 @@ infGlobal = {
     "web": web,
     "x1": "x",
     "securityPass": config["webSocket"]["securityPass"],
+    "master": config["webSocket"]["master"],
     "hostPortLocJs": config["chatPython"]["hostPortLocJs"],
     "portServerHttp": config["chatPython"]["portServerHttp"],
     "portG4fFrontEnd": config["chatPython"]["portG4fFrontEnd"],
@@ -69,19 +75,78 @@ infGlobal = {
     "openAiNagaApiKey": config["chatPython"]["openAiNagaApiKey"],
 }
 
+# ----------------------------------------------------------------------------------------------------------------------
+
+# DATEHOUR
+dias_da_semana, meses = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"], json.loads(
+    '["JAN", "FEV", "MAR", "ABR", "MAI", "JUN", "JUL", "AGO", "SET", "OUT", "NOV", "DEZ"]'
+)
+
+
+def dateHour():
+    agora = datetime.now()
+    milissegundos = int(agora.strftime("%f")) // 1000
+    tim = agora.strftime("%H%M%S") + agora.strftime("%f")[:4]
+    timMil = tim + str(milissegundos).zfill(3)
+    data_hora_formatada = {
+        "day": agora.strftime("%d"),
+        "mon": agora.strftime("%m"),
+        "yea": agora.strftime("%Y"),
+        "hou": agora.strftime("%H"),
+        "hou12": agora.strftime("%I"),
+        "houAmPm": agora.strftime("%p"),
+        "min": agora.strftime("%M"),
+        "sec": agora.strftime("%S"),
+        "mil": str(milissegundos).zfill(3),
+        "tim": tim[:10],
+        "timMil": timMil[:13],
+        "dayNam": dias_da_semana[agora.weekday()],
+        "monNam": meses[agora.month - 1],
+    }
+    return {"ret": True, "msg": "DATE HOUR: OK", "res": data_hora_formatada}
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
 
 # REGISTRAR ERROS
 def errAll(exceptErr):
-    dateNow = datetime.now()
-    dateNowMon = f"MES_{dateNow.strftime('%m')}_{dateNow.strftime('%b').upper()}"
-    dateNowDay = f"DIA_{dateNow.strftime('%d')}"
-    dateNowHou = f"{dateNow.strftime('%H')}"
-    dateNowMin = f"{dateNow.strftime('%M')}"
-    dateNowSec = f"{dateNow.strftime('%S')}"
-    dateNowMil = f"{dateNow.microsecond // 1000:03d}"
-    fileName = f"log/Python/{dateNowMon}/{dateNowDay}/{dateNowHou}.{dateNowMin}.{dateNowSec}.{dateNowMil}_err.txt"
+    retDateHour = dateHour()["res"]
+    day = retDateHour["day"]
+    mon = retDateHour["mon"]
+    monNam = retDateHour["monNam"]
+    hou = retDateHour["hou"]
+    minOk = retDateHour["min"]
+    sec = retDateHour["sec"]
+    mil = retDateHour["mil"]
+    dateNowMon = f"MES_{mon}_{monNam}"
+    dateNowDay = f"DIA_{day}"
+    fileName = f"log/Python/{dateNowMon}/{dateNowDay}/{hou}.{minOk}.{sec}.{mil}_err.txt"
     os.makedirs(os.path.dirname(fileName), exist_ok=True)
     err = f"{str(exceptErr)}\n\n"
+    with open(fileName, "a", encoding="utf-8") as file:
+        file.write(err)
+
+
+# ----------------------------------------------------------------------------------------------------------------------
+
+
+# LOGCONSOLE
+def logConsole(inf):
+    retDateHour = dateHour()["res"]
+    day = retDateHour["day"]
+    mon = retDateHour["mon"]
+    monNam = retDateHour["monNam"]
+    hou = retDateHour["hou"]
+    minOk = retDateHour["min"]
+    sec = retDateHour["sec"]
+    mil = retDateHour["mil"]
+    dateNowMon = f"MES_{mon}_{monNam}"
+    dateNowDay = f"DIA_{day}"
+    dateInFile = f"→ {hou}:{minOk}:{sec}.{mil}\n{str(inf)}"
+    fileName = f"log/Python/{dateNowMon}/{dateNowDay}/{hou}.00-{hou}.59_log.txt"
+    os.makedirs(os.path.dirname(fileName), exist_ok=True)
+    err = f"{dateInFile}\n\n"
     with open(fileName, "a", encoding="utf-8") as file:
         file.write(err)
 
@@ -92,9 +157,7 @@ def errAll(exceptErr):
 # API
 async def api(inf):
     ret = {"ret": False}
-    e = inf.get("e", None)
     try:
-        req = None
         resCode = None
         resHeaders = None
         resBody = None

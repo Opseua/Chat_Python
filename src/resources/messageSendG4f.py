@@ -22,10 +22,15 @@
 # pylint: disable=C0411
 # ERRO DE IMPORT 'datetime'
 # pylint: disable=E1101
+# ERRO IGNORAR ERROS DO CTRL + C
+# pylint: disable=W1514
+# ERRO 'sig' e 'frame'
+# pylint: disable=W0613
 
 # IMPORTAR 'export.py'
 from export import infGlobal
 from export import errAll
+from export import logConsole
 
 # BIBLIOTECAS: NATIVAS
 import os
@@ -63,7 +68,9 @@ try:
     time.sleep(2)
     # LIMPAR CONSOLE
     os.system("cls")
-    print("RODANDO → CLIENTE G4F [frontEnd/backEnd]")
+    printMsg = "RODANDO → CLIENTE G4F [frontEnd/backEnd]"
+    logConsole(printMsg)
+    print(printMsg)
 
     # ENVIAR MENSAGEM
     async def messageSendG4f(inf):
@@ -75,6 +82,7 @@ try:
                 model=model, messages=messagePrompt
             )
         except Exception as e:
+            errAll(e)
             print(str(e))
 
         if response:

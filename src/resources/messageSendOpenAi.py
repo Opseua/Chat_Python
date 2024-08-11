@@ -22,10 +22,15 @@
 # pylint: disable=C0411
 # ERRO DE IMPORT 'datetime'
 # pylint: disable=E1101
+# ERRO IGNORAR ERROS DO CTRL + C
+# pylint: disable=W1514
+# ERRO 'sig' e 'frame'
+# pylint: disable=W0613
 
 # IMPORTAR 'export.py'
 from export import infGlobal
 from export import errAll
+from export import logConsole
 
 # BIBLIOTECAS: NATIVAS
 import os
@@ -54,7 +59,9 @@ try:
     # [Naga]
     clientNaga = OpenAI(base_url=openAiNagaBaseUrl, api_key=openAiNagaApiKey)
 
-    print("RODANDO → CLIENTE OPENAI [ZukiJourney/Naga]")
+    printMsg = "RODANDO → CLIENTE OPENAI [ZukiJourney/Naga]"
+    logConsole(printMsg)
+    print(printMsg)
 
     # ENVIAR MENSAGEM
     async def messageSendOpenAi(inf):
@@ -74,6 +81,7 @@ try:
                     messages=messagePrompt,
                 )
         except Exception as e:
+            errAll(e)
             print(str(e))
 
         if response:

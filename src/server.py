@@ -22,8 +22,12 @@
 # pylint: disable=C0411
 # ERRO DE IMPORT 'datetime'
 # pylint: disable=E1101
+# ERRO IGNORAR ERROS DO CTRL + C
+# pylint: disable=W1514
+# ERRO 'sig' e 'frame'
+# pylint: disable=W0613
 
-import sys, os, locale
+import sys, os
 
 # LIMPAR CONSOLE (MANTER NO INÍCIO)
 os.system("cls")
@@ -32,12 +36,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "resourc
 # IMPORTAR 'export.py'
 from export import infGlobal
 from export import errAll
+from export import logConsole
 
 # IGNORAR ERROS DO CTRL + C
 sys.stderr = open(os.devnull, "w")
-
-# FORMATAR DATA E HORA NO PADRÃO BRASILEIRO
-locale.setlocale(locale.LC_TIME, "pt_BR")
 
 try:
     # BIBLIOTECAS: NATIVAS
@@ -74,7 +76,9 @@ try:
         await runner.setup()
         site = web.TCPSite(runner, port=portServerHttp)
         await site.start()
-        print(f"RODANDO → SERVIDOR HTTP NA PORTA: {portServerHttp}")
+        printMsg = f"RODANDO → SERVIDOR HTTP NA PORTA: {portServerHttp}"
+        logConsole(printMsg)
+        print(printMsg)
         # MANTER EM EXECUÇÃO
         while True:
             await asyncio.sleep(3600)
@@ -88,7 +92,3 @@ except Exception as exceptErr:
     errAll(exceptErr)
     print("CÓDIGO INTEIRO [server]", exceptErr)
     os._exit(1)
-
-
-# 8890 SERVER HTTP
-# 8892 GF4 FRONT-END

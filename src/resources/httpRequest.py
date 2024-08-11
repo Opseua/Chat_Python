@@ -22,6 +22,10 @@
 # pylint: disable=C0411
 # ERRO DE IMPORT 'datetime'
 # pylint: disable=E1101
+# ERRO IGNORAR ERROS DO CTRL + C
+# pylint: disable=W1514
+# ERRO 'sig' e 'frame'
+# pylint: disable=W0613
 
 # IMPORTAR 'export.py'
 from export import infGlobal
@@ -66,7 +70,7 @@ try:
         res = {"ret": ret, "msg": msg}
         if "res" in text:
             res["res"] = text["res"]
-        res = json.dumps(res)
+        res = json.dumps(res, ensure_ascii=False)
         return web.Response(text=res, status=200, content_type="application/json")
 
     # SERVER HTTP: REQUEST
@@ -76,7 +80,6 @@ try:
             data = json.loads(data)
         except Exception:
             return httpResponse({"msg": "CHAT: ERRO | JSON INVALIDO"})
-        # print("REQUISICAO RECEBIDA")
         timestampUser = int(datetime.now().timestamp())
 
         # DEFINIR 'action'
