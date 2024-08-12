@@ -26,7 +26,7 @@ from chatHistoryJson import historyGet
 
 
 def chatHistory(inf):
-    model = inf["model"]
+    provider = inf["provider"]
     includesInMessages = inf["includesInMessages"]
 
     if includesInMessages is None:
@@ -35,8 +35,8 @@ def chatHistory(inf):
     retHistoryGet = historyGet()
     chats = retHistoryGet["chats"]
 
-    if model and model != "*":
-        chats = [chat for chat in chats if chat["model"] == model]
+    if provider and provider != "*":
+        chats = [chat for chat in chats if chat["provider"] == provider]
 
     # APENAS OS 10 ÚLTIMOS CHATS (COM CONVERSAS RECENTES)
     historyLast = sorted(chats, key=lambda x: x["timestampEdit"], reverse=True)[:10]
@@ -60,7 +60,7 @@ def chatHistory(inf):
     if not historyLast:
         return {
             "ret": False,
-            "msg": "CHAT [HISTORYCHAT]: ERRO | NAO ENCONTRADO 'model'",
+            "msg": "CHAT [HISTORYCHAT]: ERRO | NAO ENCONTRADO 'provider'",
         }
 
     return {

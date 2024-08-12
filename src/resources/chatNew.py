@@ -42,9 +42,9 @@ def chatNew(inf):
     chatNewInf = {
         "timestampCreate": timestampUser,
         "timestampEdit": timestampAssistant,
+        "chatId": chatId,
         "provider": provider,
         "model": model,
-        "chatId": chatId,
         "messages": [
             {"timestampCreate": timestampUser, "role": "user", "content": message},
             {

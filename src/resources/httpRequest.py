@@ -257,7 +257,10 @@ try:
         #
         # →→→ ACTION: HISTÓRICO DE CHATS
         elif action == "historyChat":
-            infHistoryChat = {"model": model, "includesInMessages": includesInMessages}
+            infHistoryChat = {
+                "provider": provider,
+                "includesInMessages": includesInMessages,
+            }
             return httpResponse(chatHistory(infHistoryChat))
 
         # →→→ ACTION: HISTÓRICO DE MENSAGENS
@@ -285,9 +288,21 @@ except Exception as exceptErr:
     print("CÓDIGO INTEIRO [httpRequest]", exceptErr)
     os._exit(1)
 
+#
+# -----------------------
+#
+# {
+#     "action": "messageSend",
+#     "provider": "js",
+#     "chatId": "2024_08_11-03.42.53.474-VCX",
+#     "messagePrompt": "E de Marte?",
+#     "messageFile": false,
+#     "x": "x"
+# }
+
 # {
 #     "action": "historyChat",
-#     "model": "*",
+#     "provider": "js",
 #     "includesInMessages": [
 #         "role",
 #         "content",
@@ -298,28 +313,18 @@ except Exception as exceptErr:
 
 # {
 #     "action": "historyMessages",
-#     "chatId": "2024_07_28-14.24.08.379-VEG",
+#     "chatId": "2024_08_11-03.42.53.474-VCX",
 #     "includesInMessages": [
 #         "role",
-#          "content",
+#         "content",
 #         //"timestampCreate",
 #         "x"
 #     ]
 # }
 
 # {
-#     "action": "messageSend",
-#     "provider": "js",
-#     "model": "gpt-4o", // → OU SEM A CHAVE
-#     "chatId": "2024_08_10-01.07.58.990-VIU",
-#     "messagePrompt": "Quanto é 1+1?",
-#     "messageFile": false,
-#     "x": "x"
-# }
-
-# {
 #     "action": "historyDelete",
-#     "chatId": "2024_07_28-14.24.08.379-VEG",
-#     "qtdDeleteMessages": 2,
-#     "x":"x"
+#     "chatId": "2024_08_11-03.42.53.474-VCX",
+#     "qtdDeleteMessages": 99,
+#     "x": "x"
 # }

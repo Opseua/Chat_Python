@@ -31,24 +31,27 @@ def chatHistoryMessages(inf):
 
     retHistoryGet = historyGet()
     chats = retHistoryGet["chats"]
+
     messagesRes = {
         "timestampCreate": False,
         "timestampEdit": False,
-        "model": False,
         "chatId": False,
+        "provider": False,
+        "model": False,
         "messages": [],
     }
 
     # PEGAR HISTÓRICO
     for chat in chats:
         if chat["chatId"] == chatId:
-            messages = chat["messages"]
             # ADICIONAR INFORMAÇÕES DA MENSAGEM
             messagesRes["timestampCreate"] = chat["timestampCreate"]
             messagesRes["timestampEdit"] = chat["timestampEdit"]
+            messagesRes["chatId"] = chat["chatId"]
             messagesRes["provider"] = chat["provider"]
             messagesRes["model"] = chat["model"]
-            messagesRes["chatId"] = chat["chatId"]
+            messages = chat["messages"]
+
             # INCLUIR APENAS AS CHAVES INFORMADAS
             for message in messages:
                 filtered_message = {
@@ -63,8 +66,20 @@ def chatHistoryMessages(inf):
             "msg": "CHAT [HISTORYMESSAGES]: ERRO | NAO ENCONTRADO 'chatId'",
         }
 
-    return {
+    # Criar o resultado final garantindo a ordem das chaves
+    result = {
         "ret": True,
         "msg": "CHAT [HISTORYMESSAGES]: OK",
-        "res": [messagesRes],
+        "res": [
+            {
+                "timestampCreate": messagesRes["timestampCreate"],
+                "timestampEdit": messagesRes["timestampEdit"],
+                "chatId": messagesRes["chatId"],
+                "provider": messagesRes["provider"],
+                "model": messagesRes["model"],
+                "messages": messagesRes["messages"],
+            }
+        ],
     }
+
+    return result
