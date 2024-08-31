@@ -60,7 +60,7 @@ try:
                         "retInf": True,
                         "name": "chat",
                         "par": {
-                            "provider": "gitHub_Python",
+                            "provider": "openAi",  # gitHub_Python / openAi
                             "input": messagePrompt,
                         },
                     }
