@@ -39,9 +39,20 @@ import httpx
 
 # VARIÁVEIS
 fileChrome_Extension = os.getenv("fileChrome_Extension").replace(r"\\", "/")
+
+# CONFIG.json
 fullPathJson, config = (os.path.abspath(f"{fileChrome_Extension}/src/config.json"), "")
 with open(fullPathJson, "r", encoding="utf-8") as file:
     config = json.load(file)
+
+# MASTER.json
+fullPathMaster, master = (
+    os.path.abspath(f"{fileChrome_Extension}/src/master.json"),
+    "",
+)
+with open(fullPathMaster, "r", encoding="utf-8") as file:
+    master = json.load(file)
+config["master"] = master["master"]
 
 # EXPORTAR GLOBALMENTE
 infGlobal = {
@@ -62,7 +73,7 @@ infGlobal = {
     "web": web,
     "x1": "x",
     "securityPass": config["webSocket"]["securityPass"],
-    "master": config["webSocket"]["master"],
+    "master": config["master"],
     "hostPortLocJs": config["chatPython"]["hostPortLocJs"],
     "portServerHttp": config["chatPython"]["portServerHttp"],
     "portG4fFrontEnd": config["chatPython"]["portG4fFrontEnd"],
