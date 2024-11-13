@@ -17,6 +17,7 @@
 # pylint: disable=C0116
 # ERRO DE IMPORT EM OUTRA PASTA
 # pylint: disable=E0401
+# type: ignore
 # ERRO DE IMPORT ANTES DE USAR A VARIÁVEL
 # pylint: disable=C0413
 # pylint: disable=C0411
