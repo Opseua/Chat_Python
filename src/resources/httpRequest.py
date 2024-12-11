@@ -27,6 +27,16 @@
 # ERRO 'sig' e 'frame'
 # pylint: disable=W0613
 
+# {
+#   "action": "messageSend",
+#   "provider": "naga",
+#   "model": "gpt-4o-mini",
+#   "chatIdA": "chatId",
+#   "messagePrompt": "Qual o seu modelo de AI?",
+#   "messageFileA": "messageSend",
+#   "x": "x"
+# }
+
 # IMPORTAR 'export.py'
 from export import infGlobal
 from export import errAll
@@ -100,7 +110,7 @@ try:
             elif provider in ["zukiJourney", "js"]:
                 model = "gpt-4"
             elif provider in ["naga"]:
-                model = "gpt-4o-mini"
+                model = "gpt-4o-mini"  # gpt-4o-mini | gemini-1.5-pro | claude-3-haiku | llama-3.2-3b-instruct | mixtral-8x22b-instruct
             else:
                 model = "gpt-3.5-turbo"
 
