@@ -22,9 +22,9 @@
         document.getElementById('input-form').addEventListener('submit', function (event) {
             event.preventDefault();
 
-            const messageInput = document.getElementById('message-input');
+            let messageInput = document.getElementById('message-input');
             let message = messageInput.value.trimEnd(); // Remove quebras de linha no final da mensagem
-            const chatId = '2024_08_02-23.05.30.760-HRF';  // Chat ID fixo para este exemplo
+            let chatId = '2024_08_02-23.05.30.760-HRF';  // Chat ID fixo para este exemplo
 
             if (message !== '') {
                 displayMessage(message, 'user-message');
@@ -41,13 +41,13 @@
         });
 
         function displayMessage(text, className = '') {
-            const chatBox = document.getElementById('chat-box');
-            const messageElement = document.createElement('div');
+            let chatBox = document.getElementById('chat-box');
+            let messageElement = document.createElement('div');
             messageElement.className = 'message ' + className;
             messageElement.innerHTML = text.replace(/\n/g, '<br>'); // Substitui quebras de linha por <br>
 
             // Adiciona o ícone de copiar
-            const copyIcon = document.createElement('i');
+            let copyIcon = document.createElement('i');
             copyIcon.className = 'fa fa-copy copy-icon';
             copyIcon.onclick = function () {
                 copyToClipboard(text);
