@@ -42,24 +42,44 @@ try:
     # BIBLIOTECAS: NECESSÁRIO INSTALAR → pip install brotli mitmproxy
     from openai import OpenAI
 
-    # VARIÁVEIS
-    openAiZukiJourneyBaseUrl = infGlobal["openAiZukiJourneyBaseUrl"]
-    openAiZukiJourneyApiKey = infGlobal["openAiZukiJourneyApiKey"]
-    openAiNagaBaseUrl = infGlobal["openAiNagaBaseUrl"]
-    openAiNagaApiKey = infGlobal["openAiNagaApiKey"]
+    # VARIÁVEIS [https://cas.zukijourney.com/]
+    apiZukijourneyBaseUrl = infGlobal["apiZukijourneyBaseUrl"]
+    apiZukijourneyApiKey = infGlobal["apiZukijourneyApiKey"]
+    apiNagaBaseUrl = infGlobal["apiNagaBaseUrl"]
+    apiNagaApiKey = infGlobal["apiNagaApiKey"]
+    apiShardBaseUrl = infGlobal["apiShardBaseUrl"]
+    apiShardApiKey = infGlobal["apiShardApiKey"]
+    apiFresedgptBaseUrl = infGlobal["apiFresedgptBaseUrl"]
+    apiFresedgptApiKey = infGlobal["apiFresedgptApiKey"]
+    apiZanityAiBaseUrl = infGlobal["apiZanityAiBaseUrl"]
+    apiZanityAiApiKey = infGlobal["apiZanityAiApiKey"]
+    apiWebraftAiBaseUrl = infGlobal["apiWebraftAiBaseUrl"]
+    apiWebraftAiApiKey = infGlobal["apiWebraftAiApiKey"]
 
     # ------------------------------------------------------ OPENAI ------------------------------------------------------------
     # CLIENT
 
-    # [ZukiJourney]
-    clientZukiJourney = OpenAI(
-        base_url=openAiZukiJourneyBaseUrl, api_key=openAiZukiJourneyApiKey
+    # [Zukijourney] → 'zukijourney'
+    clientZukijourney = OpenAI(
+        base_url=apiZukijourneyBaseUrl, api_key=apiZukijourneyApiKey
     )
 
-    # [Naga]
-    clientNaga = OpenAI(base_url=openAiNagaBaseUrl, api_key=openAiNagaApiKey)
+    # [Naga] → 'naga'
+    clientNaga = OpenAI(base_url=apiNagaBaseUrl, api_key=apiNagaApiKey)
 
-    printMsg = "RODANDO → CLIENTE OPENAI [ZukiJourney/Naga]"
+    # [Shard] → 'shard'
+    clientShard = OpenAI(base_url=apiShardBaseUrl, api_key=apiShardApiKey)
+
+    # [Fresedgpt] → 'fresedgpt'
+    clientFresedgpt = OpenAI(base_url=apiFresedgptBaseUrl, api_key=apiFresedgptApiKey)
+
+    # [ZanityAI] → 'zanityAi'
+    clientZanityAi = OpenAI(base_url=apiZanityAiBaseUrl, api_key=apiZanityAiApiKey)
+
+    # [WebraftAI] → 'webraftAi'
+    clientWebraftAi = OpenAI(base_url=apiWebraftAiBaseUrl, api_key=apiWebraftAiApiKey)
+
+    printMsg = "RODANDO → CLIENTE API"
     logConsole(printMsg)
     print(printMsg)
 
@@ -70,16 +90,37 @@ try:
         provider = inf["provider"]
         response = None
         try:
-            if provider == "zukiJourney":
-                response = clientZukiJourney.chat.completions.create(
+            if provider == "zukijourney":
+                response = clientZukijourney.chat.completions.create(
                     model=model,
                     messages=messagePrompt,
                 )
-            elif provider == "naga":  # https://api.naga.ac/v1/limits
+            elif provider == "naga":
                 response = clientNaga.chat.completions.create(
                     model=model,
                     messages=messagePrompt,
                 )
+            elif provider == "shard":
+                response = clientShard.chat.completions.create(
+                    model=model,
+                    messages=messagePrompt,
+                )
+            elif provider == "fresedgpt":
+                response = clientFresedgpt.chat.completions.create(
+                    model=model,
+                    messages=messagePrompt,
+                )
+            elif provider == "zanityAi":
+                response = clientZanityAi.chat.completions.create(
+                    model=model,
+                    messages=messagePrompt,
+                )
+            elif provider == "webraftAi":
+                response = clientWebraftAi.chat.completions.create(
+                    model=model,
+                    messages=messagePrompt,
+                )
+
         except Exception as e:
             errAll(e)
             print(str(e))

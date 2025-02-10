@@ -47,7 +47,7 @@ try:
     asyncio = infGlobal["asyncio"]
     aiohttp_cors = infGlobal["aiohttp_cors"]
 
-    # BIBLIOTECAS: NECESSÁRIO INSTALAR → pip install brotli mitmproxy
+    # BIBLIOTECAS: NECESSÁRIO INSTALAR → pip install asyncio aiohttp_cors aiohttp httpx -U g4f[all] telethon openai
     web = infGlobal["web"]
 
     # VARIÁVEIS
@@ -93,3 +93,39 @@ except Exception as exceptErr:
     errAll(exceptErr)
     print("CÓDIGO INTEIRO [server]", exceptErr)
     os._exit(1)
+
+
+#           ---------------- NagaAI* ----------------
+# *** GPT ***
+# SIM - 03/min | 100/day → gpt-4o-mini
+# SIM - 03/min | 200/day → gpt-3.5-turbo
+
+# *** GEMINI ***
+# SIM - 02/min | 025/day → gemini-2.0-flash-thinking-exp
+# SIM - 02/min | 025/day → gemini-2.0-flash-exp
+# SIM - 02/min | 025/day → gemini-exp
+# SIM - 02/min | 025/day → gemini-1.5-pro
+# SIM - 02/min | 025/day → gemini-1.5-flash
+
+# *** LLAMA ***
+# 03/min | 100/day → LLAMA-3.3-70B-INSTRUCT
+# 03/min | 100/day → LLAMA-3.2-90B-VISION-INSTRUCT
+# 03/min | 100/day → LLAMA-3.2-11B-VISION-INSTRUCT
+# 03/min | 100/day → LLAMA-3.2-3B-INSTRUCT
+# 03/min | 100/day → LLAMA-3.2-1B-INSTRUCT
+# 03/min | 100/day → LLAMA-3.1-405B-INSTRUCT
+# 03/min | 100/day → LLAMA-3.1-70B-INSTRUCT
+# 03/min | 100/day → LLAMA-3-70B-INSTRUCT
+# 03/min | 200/day → LLAMA-3.1-8B-INSTRUCT
+# 03/min | 200/day → LLAMA-3-8B-INSTRUCT
+
+# *** CLAUDE ***
+# SIM - 02/min | 050/day → CLAUDE-3-HAIKU-20240307
+
+# *** MIXTRAL ***
+# 03/min | 200/day → MIXTRAL-8X7B-INSTRUCT
+# 03/min | 100/day → MIXTRAL-8X22B-INSTRUCT
+
+# ** DEEPSEEK ***
+# NAO - 03/min | 100/day → DEEPSEEK-REASONER
+# NAO - 03/min | 100/day → DEEPSEEK-CHAT

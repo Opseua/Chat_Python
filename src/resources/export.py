@@ -31,7 +31,7 @@
 import os, sys, time, random, string, json, re, threading, signal
 from datetime import datetime
 
-# BIBLIOTECAS: NECESSÁRIO INSTALAR → pip install brotli mitmproxy
+# BIBLIOTECAS: NECESSÁRIO INSTALAR
 import asyncio
 import aiohttp_cors
 from aiohttp import web
@@ -80,10 +80,18 @@ infGlobal = {
     "telegramApiId": config["chatPython"]["telegramApiId"],
     "telegramApiHash": config["chatPython"]["telegramApiHash"],
     "telegramChatName": config["chatPython"]["telegramChatName"],
-    "openAiZukiJourneyBaseUrl": config["chatPython"]["openAiZukiJourneyBaseUrl"],
-    "openAiZukiJourneyApiKey": config["chatPython"]["openAiZukiJourneyApiKey"],
-    "openAiNagaBaseUrl": config["chatPython"]["openAiNagaBaseUrl"],
-    "openAiNagaApiKey": config["chatPython"]["openAiNagaApiKey"],
+    "apiZukijourneyBaseUrl": config["chatPython"]["apiZukijourneyBaseUrl"],
+    "apiZukijourneyApiKey": config["chatPython"]["apiZukijourneyApiKey"],
+    "apiNagaBaseUrl": config["chatPython"]["apiNagaBaseUrl"],
+    "apiNagaApiKey": config["chatPython"]["apiNagaApiKey"],
+    "apiShardBaseUrl": config["chatPython"]["apiShardBaseUrl"],
+    "apiShardApiKey": config["chatPython"]["apiShardApiKey"],
+    "apiFresedgptBaseUrl": config["chatPython"]["apiFresedgptBaseUrl"],
+    "apiFresedgptApiKey": config["chatPython"]["apiFresedgptApiKey"],
+    "apiZanityAiBaseUrl": config["chatPython"]["apiZanityAiBaseUrl"],
+    "apiZanityAiApiKey": config["chatPython"]["apiZanityAiApiKey"],
+    "apiWebraftAiBaseUrl": config["chatPython"]["apiWebraftAiBaseUrl"],
+    "apiWebraftAiApiKey": config["chatPython"]["apiWebraftAiApiKey"],
 }
 
 # ----------------------------------------------------------------------------------------------------------------------

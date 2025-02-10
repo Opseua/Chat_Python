@@ -107,7 +107,7 @@ try:
         if model is None or model == "":
             if provider in ["telegram", "g4f"]:
                 model = "gpt-4o"
-            elif provider in ["zukiJourney", "js"]:
+            elif provider in ["zukijourney", "js"]:
                 model = "gpt-4"
             elif provider in ["naga"]:
                 model = "gpt-4o-mini"  # gpt-4o-mini | gemini-1.5-pro | claude-3-haiku | llama-3.2-3b-instruct | mixtral-8x22b-instruct
@@ -139,7 +139,7 @@ try:
         if qtdDeleteMessages is None or qtdDeleteMessages == "":
             qtdDeleteMessages = 0
 
-        if provider in ["g4f", "zukiJourney", "naga", "js"]:
+        if provider in ["g4f", "zukijourney", "naga", "js"]:
             messageFile = None
         #
         # -------------------------------------------------------------------------------------------------------------
@@ -211,7 +211,7 @@ try:
                 retMessageSend = await messageSendG4f(
                     {"model": model, "messagePrompt": messagePrompt}
                 )
-            elif provider in ["zukiJourney", "naga"]:
+            elif provider in ["zukijourney", "naga"]:
                 # *** ZUKIJOURNEY (12/min) | NAGA (3/min) [gpt-4]
                 retMessageSend = await messageSendOpenAi(
                     {
@@ -225,7 +225,7 @@ try:
                 retMessageSend = await messageSendJs({"messagePrompt": messagePrompt})
             else:
                 infBody = {
-                    "msg": "CHAT [MESSAGESEND]: ERRO | INFORMAR O 'provider' → 'telegram', 'g4f', 'zukiJourney', 'naga', 'js'"
+                    "msg": "CHAT [MESSAGESEND]: ERRO | INFORMAR O 'provider' → 'telegram', 'g4f', 'zukijourney', 'naga', 'js'"
                 }
                 return httpResponse(infBody)
 
