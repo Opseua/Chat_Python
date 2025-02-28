@@ -180,7 +180,7 @@ try:
             if messageFile:
                 if messageFile is True:
                     #  →→→→→→→→→→→→→→→ HISTORICO_ARQUIVO + PROMPT_TEXTO
-                    messageFile = "log/CONTENT.txt"
+                    messageFile = "logs/CONTENT.txt"
                     with open(messageFile, "w", encoding="utf-8") as arquivo:
                         arquivo.write(
                             json.dumps(messagesToAssistant, ensure_ascii=False)

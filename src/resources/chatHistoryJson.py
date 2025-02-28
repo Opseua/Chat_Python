@@ -24,7 +24,7 @@
 
 import json, os
 
-pathChats = "log/chats.json"
+pathChats = "logs/chats.json"
 
 
 def historyGet():

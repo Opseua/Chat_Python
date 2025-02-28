@@ -48,7 +48,7 @@ try:
     telegramApiId = infGlobal["telegramApiId"]
     telegramApiHash = infGlobal["telegramApiHash"]
     telegramChatName = infGlobal["telegramChatName"]
-    clientTelegram = TelegramClient("log/session", telegramApiId, telegramApiHash)
+    clientTelegram = TelegramClient("logs/session", telegramApiId, telegramApiHash)
 
     # ------------------------------------------------------ TELEGRAM ------------------------------------------------------------
     # CLIENT

@@ -140,7 +140,9 @@ def errAll(exceptErr):
     mil = retDateHour["mil"]
     dateNowMon = f"MES_{mon}_{monNam}"
     dateNowDay = f"DIA_{day}"
-    fileName = f"log/Python/{dateNowMon}/{dateNowDay}/{hou}.{minOk}.{sec}.{mil}_err.txt"
+    fileName = (
+        f"logs/Python/{dateNowMon}/{dateNowDay}/{hou}.{minOk}.{sec}.{mil}_err.txt"
+    )
     os.makedirs(os.path.dirname(fileName), exist_ok=True)
     err = f"{str(exceptErr)}\n\n"
     with open(fileName, "a", encoding="utf-8") as file:
@@ -163,7 +165,7 @@ def logConsole(inf):
     dateNowMon = f"MES_{mon}_{monNam}"
     dateNowDay = f"DIA_{day}"
     dateInFile = f"→ {hou}:{minOk}:{sec}.{mil}\n{str(inf)}"
-    fileName = f"log/Python/{dateNowMon}/{dateNowDay}/{hou}.00-{hou}.59_log.txt"
+    fileName = f"logs/Python/{dateNowMon}/{dateNowDay}/{hou}.00-{hou}.59_log.txt"
     os.makedirs(os.path.dirname(fileName), exist_ok=True)
     err = f"{dateInFile}\n\n"
     with open(fileName, "a", encoding="utf-8") as file:
