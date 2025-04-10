@@ -26,35 +26,52 @@
 # pylint: disable=W1514
 # ERRO 'sig' e 'frame'
 # pylint: disable=W0613
+# pylint: disable=W0101
 
-# IMPORTAR 'export.py'
-from export import infGlobal
-from export import errAll
-from export import logConsole
-
-# BIBLIOTECAS: NATIVAS
-import os
+# ARQUIVO ATUAL
+e = __file__
 
 try:
     # BIBLIOTECAS: NATIVAS
     json = infGlobal["json"]
+    datetime = infGlobal["datetime"]
+    os = infGlobal["os"]
 
     # BIBLIOTECAS: NECESSÁRIO INSTALAR → pip install brotli mitmproxy
     from openai import OpenAI
 
-    # VARIÁVEIS [https://cas.zukijourney.com/]
+    # VARIÁVEIS
     apiZukijourneyBaseUrl = infGlobal["apiZukijourneyBaseUrl"]
     apiZukijourneyApiKey = infGlobal["apiZukijourneyApiKey"]
     apiNagaBaseUrl = infGlobal["apiNagaBaseUrl"]
     apiNagaApiKey = infGlobal["apiNagaApiKey"]
-    apiShardBaseUrl = infGlobal["apiShardBaseUrl"]
-    apiShardApiKey = infGlobal["apiShardApiKey"]
     apiFresedgptBaseUrl = infGlobal["apiFresedgptBaseUrl"]
     apiFresedgptApiKey = infGlobal["apiFresedgptApiKey"]
     apiZanityAiBaseUrl = infGlobal["apiZanityAiBaseUrl"]
     apiZanityAiApiKey = infGlobal["apiZanityAiApiKey"]
     apiWebraftAiBaseUrl = infGlobal["apiWebraftAiBaseUrl"]
     apiWebraftAiApiKey = infGlobal["apiWebraftAiApiKey"]
+
+    # MODELOS
+    models = f"{projectPath}/src/providers/models"
+
+    # [zukijourney]
+    pathZukijourney = f"{models}/zukijourney.json"
+    with open(pathZukijourney, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    modelsZukijourney = [
+        {"id": m["id"], "owned_by": m["owned_by"], "is_free": m["is_free"]}
+        for m in data.get("data", [])
+        if m.get("is_free")
+    ]
+    with open(pathZukijourney, "w", encoding="utf-8") as f:
+        json.dump({"data": modelsZukijourney}, f, ensure_ascii=False, indent=4)
+
+    # [naga]
+    pathNaga = f"{models}/naga.json"
+    with open(pathNaga, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    modelsNaga = [{"id": m["id"]} for m in data.get("data", [])]
 
     # ------------------------------------------------------ OPENAI ------------------------------------------------------------
     # CLIENT
@@ -67,9 +84,6 @@ try:
     # [Naga] → 'naga'
     clientNaga = OpenAI(base_url=apiNagaBaseUrl, api_key=apiNagaApiKey)
 
-    # [Shard] → 'shard'
-    clientShard = OpenAI(base_url=apiShardBaseUrl, api_key=apiShardApiKey)
-
     # [Fresedgpt] → 'fresedgpt'
     clientFresedgpt = OpenAI(base_url=apiFresedgptBaseUrl, api_key=apiFresedgptApiKey)
 
@@ -78,63 +92,50 @@ try:
 
     # [WebraftAI] → 'webraftAi'
     clientWebraftAi = OpenAI(base_url=apiWebraftAiBaseUrl, api_key=apiWebraftAiApiKey)
-
-    printMsg = "RODANDO → CLIENTE API"
-    logConsole(printMsg)
-    print(printMsg)
+    msg = {
+        "e": e,
+        "txt": "RODANDO → CLIENTE API",
+    }
+    logConsole(msg)
 
     # ENVIAR MENSAGEM
-    async def messageSendOpenAi(inf):
-        model = inf["model"]
-        messagePrompt = json.loads(inf["messagePrompt"])
+    async def providerGitHub(inf):
         provider = inf["provider"]
         response = None
         try:
-            if provider == "zukijourney":
-                response = clientZukijourney.chat.completions.create(
-                    model=model,
-                    messages=messagePrompt,
+            logConsole({"e": e, "txt": "OK providerGitHub"})
+            clients = {
+                "zukijourney": clientZukijourney,
+                "naga": clientNaga,
+                "fresedgpt": clientFresedgpt,
+                "zanityAi": clientZanityAi,
+                "webraftAi": clientWebraftAi,
+            }
+            if provider in clients:
+                response = clients[provider].chat.completions.create(
+                    model=inf["model"],
+                    messages=json.loads(inf["messagePrompt"]),
                 )
-            elif provider == "naga":
-                response = clientNaga.chat.completions.create(
-                    model=model,
-                    messages=messagePrompt,
-                )
-            elif provider == "shard":
-                response = clientShard.chat.completions.create(
-                    model=model,
-                    messages=messagePrompt,
-                )
-            elif provider == "fresedgpt":
-                response = clientFresedgpt.chat.completions.create(
-                    model=model,
-                    messages=messagePrompt,
-                )
-            elif provider == "zanityAi":
-                response = clientZanityAi.chat.completions.create(
-                    model=model,
-                    messages=messagePrompt,
-                )
-            elif provider == "webraftAi":
-                response = clientWebraftAi.chat.completions.create(
-                    model=model,
-                    messages=messagePrompt,
-                )
-
-        except Exception as e:
-            errAll(e)
-            print(str(e))
+        except Exception as exceptErr:
+            return {
+                "ret": False,
+                "msg": f"providerGitHub: ERRO | AO ENVIAR MENSAGEM [{exceptErr}]",
+            }
 
         if response:
             # RESPOSTA RECEBIDA
-            response = response.choices[0].message.content
+            return {
+                "ret": True,
+                "msg": "providerGitHub: OK",
+                "res": response.choices[0].message.content,
+            }
         else:
             # RESPOSTA NÃO RECEBIDA
-            response = False
-
-        return response
+            return {
+                "ret": False,
+                "msg": "providerGitHub: ERRO | RESPOSTA NÃO RECEBIDA",
+                "res": response.choices[0].message.content,
+            }
 
 except Exception as exceptErr:
-    errAll(exceptErr)
-    print("CÓDIGO INTEIRO [messageSendOpenAi]", exceptErr)
-    os._exit(1)
+    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})

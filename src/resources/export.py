@@ -26,9 +26,13 @@
 # pylint: disable=W1514
 # ERRO 'sig' e 'frame'
 # pylint: disable=W0613
+# pylint: disable=W0101
+
+# ARQUIVO ATUAL
+ee = __file__
 
 # BIBLIOTECAS: NATIVAS
-import os, sys, time, random, string, json, re, threading, signal
+import os, sys, time, random, string, json, re, threading, signal, builtins
 from datetime import datetime
 
 # BIBLIOTECAS: NECESSÁRIO INSTALAR
@@ -84,8 +88,6 @@ infGlobal = {
     "apiZukijourneyApiKey": config["chatPython"]["apiZukijourneyApiKey"],
     "apiNagaBaseUrl": config["chatPython"]["apiNagaBaseUrl"],
     "apiNagaApiKey": config["chatPython"]["apiNagaApiKey"],
-    "apiShardBaseUrl": config["chatPython"]["apiShardBaseUrl"],
-    "apiShardApiKey": config["chatPython"]["apiShardApiKey"],
     "apiFresedgptBaseUrl": config["chatPython"]["apiFresedgptBaseUrl"],
     "apiFresedgptApiKey": config["chatPython"]["apiFresedgptApiKey"],
     "apiZanityAiBaseUrl": config["chatPython"]["apiZanityAiBaseUrl"],
@@ -129,7 +131,10 @@ def dateHour():
 
 
 # REGISTRAR ERROS
-def errAll(exceptErr):
+def errAll(inf):
+    e = inf.get("e", ee)
+    txt = inf.get("txt", "")
+    err = inf.get("err", "")
     retDateHour = dateHour()["res"]
     day = retDateHour["day"]
     mon = retDateHour["mon"]
@@ -144,32 +149,11 @@ def errAll(exceptErr):
         f"logs/Python/{dateNowMon}/{dateNowDay}/{hou}.{minOk}.{sec}.{mil}_err.txt"
     )
     os.makedirs(os.path.dirname(fileName), exist_ok=True)
-    err = f"{str(exceptErr)}\n\n"
+    err = f"{str(err)}"
     with open(fileName, "a", encoding="utf-8") as file:
         file.write(err)
-
-
-# ----------------------------------------------------------------------------------------------------------------------
-
-
-# LOGCONSOLE
-def logConsole(inf):
-    retDateHour = dateHour()["res"]
-    day = retDateHour["day"]
-    mon = retDateHour["mon"]
-    monNam = retDateHour["monNam"]
-    hou = retDateHour["hou"]
-    minOk = retDateHour["min"]
-    sec = retDateHour["sec"]
-    mil = retDateHour["mil"]
-    dateNowMon = f"MES_{mon}_{monNam}"
-    dateNowDay = f"DIA_{day}"
-    dateInFile = f"→ {hou}:{minOk}:{sec}.{mil}\n{str(inf)}"
-    fileName = f"logs/Python/{dateNowMon}/{dateNowDay}/{hou}.00-{hou}.59_log.txt"
-    os.makedirs(os.path.dirname(fileName), exist_ok=True)
-    err = f"{dateInFile}\n\n"
-    with open(fileName, "a", encoding="utf-8") as file:
-        file.write(err)
+    logConsole({"e": e, "txt": txt})
+    os._exit(1)
 
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -251,3 +235,50 @@ async def api(inf):
 
 
 # ----------------------------------------------------------------------------------------------------------------------
+
+
+# LOGCONSOLE
+def logConsole(inf):
+    e = inf.get("e", "Desconhecido")
+    msg = inf.get("msg", "")
+    write = inf.get("write", True)
+    timestamp = datetime.now().strftime("%d/%m %H:%M:%S.%f")[:-3]
+    if isinstance(msg, dict) or isinstance(msg, list):
+        msg = json.dumps(msg, indent=4)
+    cores = {
+        "amarelo": "\x1b[33m",
+        "azul": "\x1b[34m",
+        "verde": "\x1b[32m",
+        "vermelho": "\x1b[31m",
+        "reset": "\x1b[0m",
+    }
+    timestamp_formatted = f"{cores['verde']}{timestamp}{cores['reset']}"
+    file_formatted = f"{cores['azul']}{os.path.basename(e)}{cores['reset']}"
+    print(f"→ {timestamp_formatted} {file_formatted}\n{msg}\n")
+    if write:
+        retDateHour = dateHour()["res"]
+        day = retDateHour["day"]
+        mon = retDateHour["mon"]
+        monNam = retDateHour["monNam"]
+        hou = retDateHour["hou"]
+        minOk = retDateHour["min"]
+        sec = retDateHour["sec"]
+        mil = retDateHour["mil"]
+        dateNowMon = f"MES_{mon}_{monNam}"
+        dateNowDay = f"DIA_{day}"
+        if isinstance(msg, dict) or isinstance(msg, list):
+            msg = json.dumps(msg, indent=4)
+        dateInFile = f"→ {hou}:{minOk}:{sec}.{mil} {os.path.basename(e)}\n{str(msg)}"
+        fileName = f"logs/Python/{dateNowMon}/{dateNowDay}/{hou}.00-{hou}.59_log.txt"
+        os.makedirs(os.path.dirname(fileName), exist_ok=True)
+        err = f"{dateInFile}\n\n"
+        with open(fileName, "a", encoding="utf-8") as file:
+            file.write(err)
+
+
+# EXPORTAR GLOBALMENTE
+builtins.infGlobal = infGlobal
+builtins.dateHour = dateHour
+builtins.errAll = errAll
+builtins.api = api
+builtins.logConsole = logConsole

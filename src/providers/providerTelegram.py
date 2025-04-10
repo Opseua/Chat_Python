@@ -26,14 +26,10 @@
 # pylint: disable=W1514
 # ERRO 'sig' e 'frame'
 # pylint: disable=W0613
+# pylint: disable=W0101
 
-# IMPORTAR 'export.py'
-from export import infGlobal
-from export import errAll
-from export import logConsole
-
-# BIBLIOTECAS: NATIVAS
-import os
+# ARQUIVO ATUAL
+e = __file__
 
 try:
     # BIBLIOTECAS: NATIVAS
@@ -54,9 +50,7 @@ try:
     # CLIENT
     async def runClient():
         await clientTelegram.start()
-        printMsg = "RODANDO → CLIENTE TELEGRAM"
-        logConsole(printMsg)
-        print(printMsg)
+        logConsole({"e": e, "txt": "RODANDO → CLIENTE TELEGRAM"})
 
     # INICIAR
     loop = asyncio.get_event_loop()
@@ -73,9 +67,7 @@ try:
             return
         messageId, messageContent = event.message.id, event.message.text
         messageTimestamp = datetime.now()
-        printMsg = f"MENSAGEM RECEBIDA: {messageContent}"
-        logConsole(printMsg)
-        print(printMsg)
+        logConsole({"e": e, "txt": f"MENSAGEM RECEBIDA: {messageContent}"})
 
     # EVENTO: MENSAGEM EDITADA
     @clientTelegram.on(events.MessageEdited(from_users=telegramChatName))
@@ -88,9 +80,11 @@ try:
             includesBotEmoji = "NÃO"
             if awaitForMessage[0] in messageContent:
                 includesBotEmoji = "SIM"
-            printMsg = f"MENSAGEM ALTERADA: {awaitForMessage[0]} [{includesBotEmoji}]"
-            logConsole(printMsg)
-            print(printMsg)
+            msg = {
+                "e": e,
+                "txt": f"MENSAGEM ALTERADA: {awaitForMessage[0]} [{includesBotEmoji}]",
+            }
+            logConsole(msg)
 
     # '/reset' + APAGAR MENSAGENS
     async def messagesReset():
@@ -102,7 +96,7 @@ try:
     # ----------------------------------------------------------------------------------------------------------------------------
 
     # ENVIAR MENSAGEM
-    async def messageSendTelegram(inf):
+    async def providerTelegram(inf):
         global messageId, messageContent, messageTimestamp, isMonitoring
         content = ""
         if inf["messagePrompt"] == "reset":
@@ -111,6 +105,7 @@ try:
             return "COMANDO: reset"
         if inf["messageFile"] is None:
             # MENSAGEM: TEXTO
+            logConsole({"e": e, "txt": "OK providerTelegram"})
             await clientTelegram.send_message(telegramChatName, inf["messagePrompt"])
         elif inf["messageFile"]:
             # MENSAGEM: ARQUIVO
@@ -124,9 +119,7 @@ try:
             while True:
                 if (datetime.now() - start_wait_time).total_seconds() > 60:
                     isMonitoring = False
-                    printMsg = "MENSAGEM NÃO RECEBIDA"
-                    logConsole(printMsg)
-                    print(printMsg)
+                    logConsole({"e": e, "txt": "MENSAGEM NÃO RECEBIDA"})
                     messageId, messageContent, messageTimestamp = None, "", None
                     return False
                 await asyncio.sleep(1.5)
@@ -140,9 +133,7 @@ try:
                         await asyncio.sleep(1)
                         if (datetime.now() - start_time).total_seconds() > 1:
                             isMonitoring = False
-                            printMsg = "# MENSAGEM COMPLETA #"
-                            logConsole(printMsg)
-                            print(printMsg)
+                            logConsole({"e": e, "txt": "# MENSAGEM COMPLETA #"})
                             messageContent = re.sub(
                                 r".*\n\n", "", messageContent, count=1
                             )
@@ -156,6 +147,4 @@ try:
             return False
 
 except Exception as exceptErr:
-    errAll(exceptErr)
-    print("CÓDIGO INTEIRO [messageSendTelegram]", exceptErr)
-    os._exit(1)
+    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})

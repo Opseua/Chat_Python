@@ -26,22 +26,10 @@
 # pylint: disable=W1514
 # ERRO 'sig' e 'frame'
 # pylint: disable=W0613
+# pylint: disable=W0101
 
-# {
-#   "action": "messageSend",
-#   "provider": "naga",
-#   "model": "gpt-4o-mini",
-#   "chatIdA": "chatId",
-#   "messagePrompt": "Qual o seu modelo de AI?",
-#   "messageFileA": "messageSend",
-#   "x": "x"
-# }
-
-# IMPORTAR 'export.py'
-from export import infGlobal
-from export import errAll
-
-# BIBLIOTECAS: NATIVAS
+# ARQUIVO ATUAL
+e = __file__
 import os
 
 try:
@@ -57,18 +45,12 @@ try:
     web = infGlobal["web"]
 
     # FUNÇÕES DE ARQUIVOS
-    sys.path.append(
-        os.path.abspath(os.path.join(os.path.dirname(__file__), "resourcesNew"))
-    )
     from chatHistoryDelete import chatHistoryDelete
     from chatHistoryMessages import chatHistoryMessages
     from chatHistory import chatHistory
     from chatAddMessage import chatAddMessage
     from chatNew import chatNew
-    from messageSendG4f import messageSendG4f
-    from messageSendTelegram import messageSendTelegram
-    from messageSendOpenAi import messageSendOpenAi
-    from messageSendJs import messageSendJs
+    from providersSend import providersSend
 
     # SERVER HTTP: RESPONSE
     def httpResponse(text):
@@ -93,57 +75,26 @@ try:
         timestampUser = int(datetime.now().timestamp())
 
         # DEFINIR 'action'
-        action = data.get("action")
-        if action is None or action == "":
+        action = data.get("action", None)
+        if not action:
             return httpResponse({"msg": "CHAT: ERRO | INFORMAR O 'action'"})
 
-        # DEFINIR 'provider'
-        provider = data.get("provider")
-        if provider is None or provider == "":
-            provider = None
+        # DEFINIR 'providers' | 'messagePrompt' | 'messageFile' | 'chatId' | 'includesInMessages' | 'qtdDeleteMessages'
+        providers = data.get("provider", [])
+        if providers and isinstance(providers, str):
+            providers = [providers]
+        model = data.get("model", None)
+        messagePrompt = data.get("messagePrompt", None)
+        messageFile = data.get("messageFile", None)
+        chatId = data.get("chatId", None)
+        includesInMessages = data.get("includesInMessages", [])
+        qtdDeleteMessages = data.get("qtdDeleteMessages", 0)
 
-        # DEFINIR 'model'
-        model = data.get("model")
-        if model is None or model == "":
-            if provider in ["telegram", "g4f"]:
-                model = "gpt-4o"
-            elif provider in ["zukijourney", "js"]:
-                model = "gpt-4"
-            elif provider in ["naga"]:
-                model = "gpt-4o-mini"  # gpt-4o-mini | gemini-1.5-pro | claude-3-haiku | llama-3.2-3b-instruct | mixtral-8x22b-instruct
-            else:
-                model = "gpt-3.5-turbo"
-
-        # DEFINIR 'messagePrompt'
-        messagePrompt = data.get("messagePrompt")
-        if messagePrompt is None or messagePrompt == "":
-            messagePrompt = None
-
-        # DEFINIR 'messageFile'
-        messageFile = data.get("messageFile")
-        if messageFile is None or messageFile == "" or messageFile is False:
+        if all(p != "telegram" for p in providers):
             messageFile = None
 
-        # DEFINIR 'chatId'
-        chatId = data.get("chatId")
-        if chatId is None or chatId == "":
-            chatId = None
-
-        # DEFINIR 'includesInMessages'
-        includesInMessages = data.get("includesInMessages")
-        if includesInMessages is None or includesInMessages == "":
-            includesInMessages = []
-
-        # DEFINIR 'qtdDeleteMessages'
-        qtdDeleteMessages = data.get("qtdDeleteMessages")
-        if qtdDeleteMessages is None or qtdDeleteMessages == "":
-            qtdDeleteMessages = 0
-
-        if provider in ["g4f", "zukijourney", "naga", "js"]:
-            messageFile = None
-        #
         # -------------------------------------------------------------------------------------------------------------
-        #
+
         # →→→ ACTION: ENVIAR MENSAGEM
         if action == "messageSend":
             if messagePrompt is None:
@@ -169,17 +120,15 @@ try:
 
             # DEFINIR PROMPT
             messagePromptKeep = messagePrompt
-            # --- [TEXTO]
             if messageFile is None:
-                # →→→→→→→→→→→→→→→→→→→→→→→→→ { "HISTORICO_TEXTO" + "PROMPT_TEXTO" }
+                # [TEXTO] →→→→→→→→→→→→→→→→→→→→→→→→→ { "HISTORICO_TEXTO" + "PROMPT_TEXTO" }
                 messagesToAssistant.append(
                     {"role": "user", "content": messagePromptKeep}
                 )
                 messagePrompt = json.dumps(messagesToAssistant, ensure_ascii=False)
-            # --- [ARQUIVO + TEXTO]
             if messageFile:
                 if messageFile is True:
-                    #  →→→→→→→→→→→→→→→ HISTORICO_ARQUIVO + PROMPT_TEXTO
+                    #  [ARQUIVO + TEXTO] →→→→→→→→→→→→→→→ HISTORICO_ARQUIVO + PROMPT_TEXTO
                     messageFile = "logs/CONTENT.txt"
                     with open(messageFile, "w", encoding="utf-8") as arquivo:
                         arquivo.write(
@@ -190,56 +139,58 @@ try:
                     pass
 
             # ENVIAR MENSAGEM
-            retMessageSend = None
-            if provider == "telegram":
-                # *** TELEGRAN [gpt-4o]
-                retMessageSend = await messageSendTelegram(
-                    {"messagePrompt": messagePrompt, "messageFile": messageFile}
-                )
-                # PROSSEGUIR COM O ARQUIVO
-                if messageFile:
-                    retMessageSend = await messageSendTelegram(
-                        {"messagePrompt": messagePrompt, "messageFile": None}
-                    )
-                # RESETAR E LIMPAR CONVERSA
-                asyncio.create_task(
-                    messageSendTelegram({"messagePrompt": "reset", "messageFile": None})
-                )
+            retMessageSend = {"ret": False}
 
-            elif provider == "g4f":
-                # *** G4F [gpt-4o]
-                retMessageSend = await messageSendG4f(
-                    {"model": model, "messagePrompt": messagePrompt}
-                )
-            elif provider in ["zukijourney", "naga"]:
-                # *** ZUKIJOURNEY (12/min) | NAGA (3/min) [gpt-4]
-                retMessageSend = await messageSendOpenAi(
-                    {
-                        "model": model,
-                        "messagePrompt": messagePrompt,
-                        "provider": provider,
-                    }
-                )
-            elif provider == "js":
-                # *** JS [gpt-4]
-                retMessageSend = await messageSendJs({"messagePrompt": messagePrompt})
-            else:
+            ############################################################################################################################################
+
+            if not providers:
                 infBody = {
-                    "msg": "CHAT [MESSAGESEND]: ERRO | INFORMAR O 'provider' → 'telegram', 'g4f', 'zukijourney', 'naga', 'js'"
+                    "msg": "CHAT [MESSAGESEND]: ERRO | INFORMAR O 'provider' [string ou array]"
                 }
                 return httpResponse(infBody)
+            if not any(
+                v
+                in [
+                    "telegram",
+                    "g4f",
+                    "zukijourney",
+                    "naga",
+                    "fresedgpt",
+                    "zanityAi",
+                    "webraftAi",
+                ]
+                for v in providers
+            ):
+                infBody = {"msg": "CHAT [MESSAGESEND]: ERRO | NENHUM 'provider' VÁLIDO"}
+                return httpResponse(infBody)
+            else:
+                # ENVIAR MENSAGEM PARA VÁRIOS BOTS E PEGAR A PRIMEIRA RESPOSTA
+                infProvidersSend = {
+                    "providers": providers,
+                    "model": model,
+                    "messagePrompt": messagePrompt,
+                    "messageFile": messageFile,
+                }
+                retMessageSend = await providersSend(infProvidersSend)
+                msg = {
+                    "txt": f"*** RECEBIDO *** [{retMessageSend['provider']}] ([{retMessageSend['model']}])",
+                    "e": e,
+                }
+                logConsole(msg)
+
+            ############################################################################################################################################
 
             # BOT: RESPOSTA RECEBIDA
-            if retMessageSend:
+            if retMessageSend["ret"]:
                 infChat = {
                     "chatNew": isNewChat,
                     "chatId": chatId,
-                    "provider": provider,
-                    "model": model,
+                    "provider": retMessageSend["provider"],
+                    "model": retMessageSend["model"],
                     "timestampUser": timestampUser,
                     "timestampAssistant": int(datetime.now().timestamp()),
                     "message": messagePromptKeep,
-                    "response": retMessageSend,
+                    "response": retMessageSend["res"],
                 }
                 if isNewChat:
                     # CHAT: CRIAR NOVO
@@ -253,15 +204,14 @@ try:
                     "res": {
                         "chatNew": isNewChat,
                         "chatId": chatId,
-                        "provider": provider,
-                        "model": model,
-                        "response": retMessageSend,
+                        "provider": retMessageSend["provider"],
+                        "model": retMessageSend["model"],
+                        "response": retMessageSend["res"],
                     },
                 }
-                return httpResponse(infBody)
             else:
-                infBody = {"msg": "CHAT [MESSAGESEND]: ERRO | RESPOSTA NAO RECEBIDA"}
-                return httpResponse(infBody)
+                infBody = {"ret": False, "msg": retMessageSend["msg"]}
+            return httpResponse(infBody)
         #
         # -------------------------------------------------------------------------------------------------------------
         #
@@ -294,47 +244,4 @@ try:
             return httpResponse({"msg": "CHAT: ERRO | NÃO IDENTIFICADO 'action'"})
 
 except Exception as exceptErr:
-    errAll(exceptErr)
-    print("CÓDIGO INTEIRO [httpRequest]", exceptErr)
-    os._exit(1)
-
-#
-# -----------------------
-#
-# {
-#     "action": "messageSend",
-#     "provider": "js",
-#     "chatId": "2024_08_11-03.42.53.474-VCX",
-#     "messagePrompt": "E de Marte?",
-#     "messageFile": false,
-#     "x": "x"
-# }
-
-# {
-#     "action": "historyChat",
-#     "provider": "js",
-#     "includesInMessages": [
-#         "role",
-#         "content",
-#         //"timestampCreate",
-#         "x"
-#     ]
-# }
-
-# {
-#     "action": "historyMessages",
-#     "chatId": "2024_08_11-03.42.53.474-VCX",
-#     "includesInMessages": [
-#         "role",
-#         "content",
-#         //"timestampCreate",
-#         "x"
-#     ]
-# }
-
-# {
-#     "action": "historyDelete",
-#     "chatId": "2024_08_11-03.42.53.474-VCX",
-#     "qtdDeleteMessages": 99,
-#     "x": "x"
-# }
+    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})

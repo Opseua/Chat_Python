@@ -26,14 +26,10 @@
 # pylint: disable=W1514
 # ERRO 'sig' e 'frame'
 # pylint: disable=W0613
+# pylint: disable=W0101
 
-# IMPORTAR 'export.py'
-from export import infGlobal
-from export import errAll
-from export import logConsole
-
-# BIBLIOTECAS: NATIVAS
-import os
+# ARQUIVO ATUAL
+e = __file__
 
 try:
     # BIBLIOTECAS: NATIVAS
@@ -42,6 +38,8 @@ try:
     json = infGlobal["json"]
     threading = infGlobal["threading"]
     signal = infGlobal["signal"]
+    datetime = infGlobal["datetime"]
+    os = infGlobal["os"]
 
     # BIBLIOTECAS: NECESSÁRIO INSTALAR → pip install brotli mitmproxy
     from g4f.client import Client
@@ -68,22 +66,34 @@ try:
     time.sleep(2)
     # LIMPAR CONSOLE
     os.system("cls")
-    printMsg = "RODANDO → CLIENTE G4F [frontEnd/backEnd]"
-    logConsole(printMsg)
-    print(printMsg)
+    msg = {
+        "e": e,
+        "txt": "RODANDO → CLIENTE G4F [frontEnd/backEnd]",
+    }
+    logConsole(msg)
 
     # ENVIAR MENSAGEM
-    async def messageSendG4f(inf):
+    async def providerG4f(inf):
         model = inf["model"]
         messagePrompt = json.loads(inf["messagePrompt"])
         response = None
         try:
+            msg = {
+                "e": e,
+                "txt": "OK providerG4f",
+            }
+            logConsole(msg)
             response = client.chat.completions.create(
                 model=model, messages=messagePrompt
             )
-        except Exception as e:
-            errAll(e)
-            print(str(e))
+        except Exception as exceptErr:
+            errAll(
+                {
+                    "e": e,
+                    "err": exceptErr,
+                    "msg": "providerG4f: ERRO | ENVIAR MENSAGEM",
+                }
+            )
 
         if response:
             # RESPOSTA RECEBIDA
@@ -95,6 +105,4 @@ try:
         return response
 
 except Exception as exceptErr:
-    errAll(exceptErr)
-    print("CÓDIGO INTEIRO [messageSendG4f]", exceptErr)
-    os._exit(1)
+    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})

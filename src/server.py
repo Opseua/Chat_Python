@@ -17,7 +17,6 @@
 # pylint: disable=C0116
 # ERRO DE IMPORT EM OUTRA PASTA
 # pylint: disable=E0401
-# type: ignore
 # ERRO DE IMPORT ANTES DE USAR A VARIÁVEL
 # pylint: disable=C0413
 # pylint: disable=C0411
@@ -27,20 +26,28 @@
 # pylint: disable=W1514
 # ERRO 'sig' e 'frame'
 # pylint: disable=W0613
+# pylint: disable=W0101
 
-import sys, os
+# ARQUIVO ATUAL
+e = __file__
 
-# LIMPAR CONSOLE (MANTER NO INÍCIO)
+# BIBLIOTECAS: NATIVAS
+import os, sys, builtins
+
+# LIMPAR CONSOLE (MANTER NO INÍCIO) | IGNORAR ERROS DO CTRL + C
 os.system("cls")
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "resources")))
-# IMPORTAR 'export.py'
-from export import infGlobal
-from export import errAll
-from export import logConsole
-
-# IGNORAR ERROS DO CTRL + C
 sys.stderr = open(os.devnull, "w")
+
+# PATH DO PROJETO
+project = "Chat_Python"
+projectPath = os.path.abspath(__file__).split(project)[0] + project
+builtins.projectPath = projectPath.replace("\\", "/")
+
+# PATHS DE ARQUIVOS '.py'
+sys.path.append(f"{projectPath}/src/chat")
+sys.path.append(f"{projectPath}/src/providers")
+sys.path.append(f"{projectPath}/src/resources")
+from export import errAll
 
 try:
     # BIBLIOTECAS: NATIVAS
@@ -77,9 +84,9 @@ try:
         await runner.setup()
         site = web.TCPSite(runner, port=portServerHttp)
         await site.start()
-        printMsg = f"RODANDO → SERVIDOR HTTP NA PORTA: {portServerHttp}"
-        logConsole(printMsg)
-        print(printMsg)
+        logConsole(
+            {"e": e, "msg": f"RODANDO → SERVIDOR HTTP NA PORTA: {portServerHttp}"}
+        )
         # MANTER EM EXECUÇÃO
         while True:
             await asyncio.sleep(3600)
@@ -90,9 +97,7 @@ try:
         loop.run_until_complete(serverRun())
 
 except Exception as exceptErr:
-    errAll(exceptErr)
-    print("CÓDIGO INTEIRO [server]", exceptErr)
-    os._exit(1)
+    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})
 
 
 #           ---------------- NagaAI* ----------------
