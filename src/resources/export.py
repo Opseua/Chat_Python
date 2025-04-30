@@ -174,7 +174,7 @@ async def api(inf):
             "method": inf["method"],
             "headers": inf.get("headers", {}),
             # TEMPO LIMITE [PADRÃO 20 SEGUNDOS]
-            "timeout": inf.get("max", 20),
+            "timeout": inf.get("maxConnect", 20),
         }
         # BODY
         if inf.get("body") and reqOpt["method"] in ["POST", "PUT"]:
