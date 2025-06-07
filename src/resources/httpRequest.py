@@ -148,21 +148,6 @@ try:
                     "msg": "CHAT [MESSAGESEND]: ERRO | INFORMAR O 'provider' [string ou array]"
                 }
                 return httpResponse(infBody)
-            if not any(
-                v
-                in [
-                    "telegram",
-                    "g4f",
-                    "zukijourney",
-                    "naga",
-                    "fresedgpt",
-                    "zanityAi",
-                    "webraftAi",
-                ]
-                for v in providers
-            ):
-                infBody = {"msg": "CHAT [MESSAGESEND]: ERRO | NENHUM 'provider' VÁLIDO"}
-                return httpResponse(infBody)
             else:
                 # ENVIAR MENSAGEM PARA VÁRIOS BOTS E PEGAR A PRIMEIRA RESPOSTA
                 infProvidersSend = {
@@ -172,6 +157,10 @@ try:
                     "messageFile": messageFile,
                 }
                 retMessageSend = await providersSend(infProvidersSend)
+
+                print(retMessageSend)
+                sys.exit("Finalizando o script de propósito")
+
                 msg = {
                     "txt": f"*** RECEBIDO *** [{retMessageSend['provider']}] ([{retMessageSend['model']}])",
                     "e": e,
@@ -244,4 +233,4 @@ try:
             return httpResponse({"msg": "CHAT: ERRO | NÃO IDENTIFICADO 'action'"})
 
 except Exception as exceptErr:
-    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})
+    errAll({"e": e, "err": exceptErr, "txt": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})

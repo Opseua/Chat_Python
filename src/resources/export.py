@@ -94,6 +94,8 @@ infGlobal = {
     "apiZanityAiApiKey": config["chatPython"]["apiZanityAiApiKey"],
     "apiWebraftAiBaseUrl": config["chatPython"]["apiWebraftAiBaseUrl"],
     "apiWebraftAiApiKey": config["chatPython"]["apiWebraftAiApiKey"],
+    "apiOpenAiBaseUrl": config["chatPython"]["apiOpenAiBaseUrl"],
+    "apiOpenAiApiKey": config["chatPython"]["apiOpenAiApiKey"],
 }
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -240,11 +242,11 @@ async def api(inf):
 # LOGCONSOLE
 def logConsole(inf):
     e = inf.get("e", "Desconhecido")
-    msg = inf.get("msg", "")
+    txt = inf.get("txt", "")
     write = inf.get("write", True)
     timestamp = datetime.now().strftime("%d/%m %H:%M:%S.%f")[:-3]
-    if isinstance(msg, dict) or isinstance(msg, list):
-        msg = json.dumps(msg, indent=4)
+    if isinstance(txt, dict) or isinstance(txt, list):
+        txt = json.dumps(txt, indent=4)
     cores = {
         "amarelo": "\x1b[33m",
         "azul": "\x1b[34m",
@@ -254,7 +256,7 @@ def logConsole(inf):
     }
     timestamp_formatted = f"{cores['verde']}{timestamp}{cores['reset']}"
     file_formatted = f"{cores['azul']}{os.path.basename(e)}{cores['reset']}"
-    print(f"→ {timestamp_formatted} {file_formatted}\n{msg}\n")
+    print(f"→ {timestamp_formatted} {file_formatted}\n{txt}\n")
     if write:
         retDateHour = dateHour()["res"]
         day = retDateHour["day"]
@@ -266,9 +268,9 @@ def logConsole(inf):
         mil = retDateHour["mil"]
         dateNowMon = f"MES_{mon}_{monNam}"
         dateNowDay = f"DIA_{day}"
-        if isinstance(msg, dict) or isinstance(msg, list):
-            msg = json.dumps(msg, indent=4)
-        dateInFile = f"→ {hou}:{minOk}:{sec}.{mil} {os.path.basename(e)}\n{str(msg)}"
+        if isinstance(txt, dict) or isinstance(txt, list):
+            txt = json.dumps(txt, indent=4)
+        dateInFile = f"→ {hou}:{minOk}:{sec}.{mil} {os.path.basename(e)}\n{str(txt)}"
         fileName = f"logs/Python/{dateNowMon}/{dateNowDay}/{hou}.00-{hou}.59_log.txt"
         os.makedirs(os.path.dirname(fileName), exist_ok=True)
         err = f"{dateInFile}\n\n"

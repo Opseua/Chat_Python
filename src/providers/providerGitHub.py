@@ -134,8 +134,7 @@ try:
             return {
                 "ret": False,
                 "msg": "providerGitHub: ERRO | RESPOSTA NÃO RECEBIDA",
-                "res": response.choices[0].message.content,
             }
 
 except Exception as exceptErr:
-    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})
+    errAll({"e": e, "err": exceptErr, "txt": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})

@@ -51,4 +51,4 @@ try:
             json.dump(inf, file, ensure_ascii=False, indent=4)
 
 except Exception as exceptErr:
-    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})
+    errAll({"e": e, "err": exceptErr, "txt": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})

@@ -31,6 +31,8 @@
 # ARQUIVO ATUAL
 e = __file__
 
+# from export import errAll
+
 try:
     # BIBLIOTECAS: NATIVAS
     asyncio = infGlobal["asyncio"]
@@ -38,8 +40,10 @@ try:
 
     # FUNÇÕES DE ARQUIVOS
     from providerG4f import providerG4f
-    from providerGitHub import providerGitHub
-    from providerTelegram import providerTelegram
+
+    # from providerGitHub import providerGitHub
+    # from providerTelegram import providerTelegram
+    from providerOpenAi import providerOpenAi
 
     async def multipleProvidersSend(inf):
         provider = inf["provider"]
@@ -67,7 +71,7 @@ try:
                 providerTelegram({"messagePrompt": "reset", "messageFile": None})
             )
         elif provider == "g4f":
-            # *** G4F [gpt-4o]
+            # *** G4F [gpt-4o-mini]
             model = model or "gpt-4o-mini"
             retMessageSend = await g4f({"model": model, "messagePrompt": messagePrompt})
         elif provider in ["zukijourney", "naga", "fresedgpt", "zanityAi", "webraftAi"]:
@@ -76,6 +80,20 @@ try:
             retMessageSend = await providerGitHub(
                 {"model": model, "messagePrompt": messagePrompt, "provider": provider}
             )
+        elif provider == "openAi":
+            # *** OpenAi [multiplos]
+            model = model or "gpt-4o-mini"
+            retMessageSend = await providerOpenAi(
+                {"model": model, "messagePrompt": messagePrompt, "provider": provider}
+            )
+            print(retMessageSend)
+        # --------------------------------------------------------------------------------------
+        else:
+            return {
+                "ret": False,
+                "msg": "CHAT [MESSAGESEND]: ERRO | NENHUM 'provider' VÁLIDO",
+            }
+        #########################################################################################
         return {
             "ret": retMessageSend["ret"],
             "msg": retMessageSend["msg"],
@@ -128,4 +146,4 @@ try:
         return first_response
 
 except Exception as exceptErr:
-    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})
+    errAll({"e": e, "err": exceptErr, "txt": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})

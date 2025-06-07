@@ -85,7 +85,7 @@ try:
         site = web.TCPSite(runner, port=portServerHttp)
         await site.start()
         logConsole(
-            {"e": e, "msg": f"RODANDO → SERVIDOR HTTP NA PORTA: {portServerHttp}"}
+            {"e": e, "txt": f"RODANDO → SERVIDOR HTTP NA PORTA: {portServerHttp}"}
         )
         # MANTER EM EXECUÇÃO
         while True:
@@ -97,7 +97,7 @@ try:
         loop.run_until_complete(serverRun())
 
 except Exception as exceptErr:
-    errAll({"e": e, "err": exceptErr, "msg": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})
+    errAll({"e": e, "err": exceptErr, "txt": f"CÓDIGO INTEIRO\n{str(exceptErr)}"})
 
 
 #           ---------------- NagaAI* ----------------
