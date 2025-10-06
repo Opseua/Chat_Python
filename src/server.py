@@ -28,7 +28,7 @@
 # pylint: disable=W0613
 # pylint: disable=W0101
 
-# ARQUIVO ATUAL
+# ARQUIVO ATUALaa
 e = __file__
 
 # BIBLIOTECAS: NATIVAS
