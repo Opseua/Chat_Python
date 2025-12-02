@@ -32,16 +32,19 @@
 e = __file__
 
 # BIBLIOTECAS: NATIVAS
-import os, sys, builtins
+import os, sys
 
 # LIMPAR CONSOLE (MANTER NO INÍCIO) | IGNORAR ERROS DO CTRL + C
 os.system("cls")
 sys.stderr = open(os.devnull, "w")
 
-# PATH DO PROJETO
-project = "Chat_Python"
-projectPath = os.path.abspath(__file__).split(project)[0] + project
-builtins.projectPath = projectPath.replace("\\", "/")
+# ------------------------------------------------------------------------------------
+# [PADRÃO EM TODOS OS PROJETOS]
+fileChrome_Extension = os.getenv("fileChrome_Extension").replace("\\", "/")
+fileProjetos = os.getenv("fileProjetos").replace("\\", "/")
+projectName = os.path.abspath(__file__).split("PROJETOS\\")[1].split("\\src")[0]
+projectPath = f"{fileProjetos}/{projectName}".replace("\\", "/")
+# ------------------------------------------------------------------------------------
 
 # PATHS DE ARQUIVOS '.py'
 sys.path.append(f"{projectPath}/src/chat")
