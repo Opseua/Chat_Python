@@ -17,6 +17,8 @@
 # pylint: disable=C0116
 # ERRO DE IMPORT EM OUTRA PASTA
 # pylint: disable=E0401
+# ERRO DE IMPORT NAO IDENTIFICADO
+# pylint: disable=E0611
 # ERRO DE IMPORT ANTES DE USAR A VARIÁVEL
 # pylint: disable=C0413
 # pylint: disable=C0411
@@ -26,7 +28,8 @@
 # pylint: disable=W1514
 # ERRO 'sig' e 'frame'
 # pylint: disable=W0613
-# pylint: disable=W0101
+# ERRO VARUAVEUS GLOBAIS
+# pylint: disable=W0601
 
 # ARQUIVO ATUAL
 e = __file__
