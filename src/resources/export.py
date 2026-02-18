@@ -12,16 +12,16 @@ from aiohttp import web
 import httpx
 
 # VARIÁVEIS
-fileChrome_Extension = os.getenv("fileChrome_Extension").replace(r"\\", "/")
+fileExtension = os.getenv("fileExtension").replace(r"\\", "/")
 
 # CONFIG.json
-fullPathJson, config = (os.path.abspath(f"{fileChrome_Extension}/src/config.json"), "")
+fullPathJson, config = (os.path.abspath(f"{fileExtension}/src/config.json"), "")
 with open(fullPathJson, "r", encoding="utf-8") as file:
     config = json.load(file)
 
 # MASTER.json
 fullPathMaster, master = (
-    os.path.abspath(f"{fileChrome_Extension}/src/master.json"),
+    os.path.abspath(f"{fileExtension}/src/master.json"),
     "",
 )
 with open(fullPathMaster, "r", encoding="utf-8") as file:

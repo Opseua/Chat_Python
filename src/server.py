@@ -10,7 +10,7 @@ sys.stderr = open(os.devnull, "w")
 
 # ------------------------------------------------------------------------------------
 # [PADRÃO EM TODOS OS PROJETOS]
-fileChrome_Extension = os.getenv("fileChrome_Extension").replace("\\", "/")
+fileExtension = os.getenv("fileExtension").replace("\\", "/")
 fileProjetos = os.getenv("fileProjetos").replace("\\", "/")
 projectName = os.path.abspath(__file__).split("PROJETOS\\")[1].split("\\src")[0]
 projectPath = f"{fileProjetos}/{projectName}".replace("\\", "/")
