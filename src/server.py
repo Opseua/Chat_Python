@@ -4,7 +4,7 @@ e = __file__
 # BIBLIOTECAS: NATIVAS
 import os, sys
 
-# LIMPAR CONSOLE (MANTER NO INÍCIO) | IGNORAR ERROS DO CTRL + C.
+# LIMPAR CONSOLE (MANTER NO INÍCIO) | IGNORAR ERROS DO CTRL + C
 os.system("cls")
 sys.stderr = open(os.devnull, "w")
 
